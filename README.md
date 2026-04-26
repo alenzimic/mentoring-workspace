@@ -1,5 +1,6 @@
 # Mentoring Workspace
 
+Smooth communication is key in a mentor-mentee relationship, as it can greatly improve long-term efficiency. Most project management apps are built on closed software and have very limited integration capabilities. Google Suite may be one of the most versatile and useful tools for collaboration, but it lacks a true project management interface. This repository aims to take advantage of Google Suite’s strengths and combine them with a project management interface, for making mentor-mentee communication an easier and more organized task.
 A minimal collaborative tracker for mentors and mentees. It keeps daily entries, optional figures, lightweight bullets/tables, shared tasks, assignees, do dates, deadlines, task statuses, and date-based timeline/calendar views in one simple interface.
 
 The app can run in two ways:
