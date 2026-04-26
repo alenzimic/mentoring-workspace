@@ -1,0 +1,73 @@
+<svg width="1200" height="680" viewBox="0 0 1200 680" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Mentoring Workspace interface and sync flow</title>
+  <desc id="desc">A diagram showing the mentoring workspace interface connected to Google Apps Script, Google Docs, and Google Sheets.</desc>
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="12" stdDeviation="18" flood-color="#6b5a46" flood-opacity="0.14"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2 2L10 6L2 10" fill="none" stroke="#7b5f42" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="680" rx="0" fill="#f6f1e8"/>
+  <rect x="34" y="34" width="1132" height="612" rx="28" fill="#fbf8f1" stroke="#d8cbb9"/>
+
+  <text x="72" y="94" fill="#9b4f36" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800">Mentoring Workspace</text>
+  <text x="72" y="128" fill="#6f665a" font-family="Inter, Arial, sans-serif" font-size="18">A simple shared page for daily notes, task ownership, dates, and progress history.</text>
+
+  <g filter="url(#shadow)">
+    <rect x="72" y="174" width="456" height="364" rx="18" fill="#fffdf8" stroke="#d6c8b6"/>
+    <text x="104" y="222" fill="#292722" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="800">Web interface</text>
+    <text x="104" y="254" fill="#6f665a" font-family="Inter, Arial, sans-serif" font-size="16">Used by mentors, mentees, or collaborators.</text>
+
+    <rect x="104" y="290" width="178" height="72" rx="12" fill="#f1eadf" stroke="#d8cbb9"/>
+    <text x="126" y="320" fill="#50483f" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700">Daily log</text>
+    <text x="126" y="344" fill="#6f665a" font-family="Inter, Arial, sans-serif" font-size="14">Work, notes, blockers</text>
+
+    <rect x="318" y="290" width="178" height="72" rx="12" fill="#edf3e8" stroke="#c5d3bd"/>
+    <text x="340" y="320" fill="#4f684e" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700">Shared tasks</text>
+    <text x="340" y="344" fill="#6f665a" font-family="Inter, Arial, sans-serif" font-size="14">Assignee, status, dates</text>
+
+    <rect x="104" y="392" width="178" height="72" rx="12" fill="#f4e5de" stroke="#dfc5ba"/>
+    <text x="126" y="422" fill="#8d4a36" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700">Timeline</text>
+    <text x="126" y="446" fill="#6f665a" font-family="Inter, Arial, sans-serif" font-size="14">Filter by day or person</text>
+
+    <rect x="318" y="392" width="178" height="72" rx="12" fill="#f6edd8" stroke="#ded0a6"/>
+    <text x="340" y="422" fill="#75602f" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700">Settings</text>
+    <text x="340" y="446" fill="#6f665a" font-family="Inter, Arial, sans-serif" font-size="14">People and sync mode</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="650" y="176" width="206" height="132" rx="18" fill="#fffdf8" stroke="#d6c8b6"/>
+    <text x="692" y="224" fill="#292722" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800">Apps Script</text>
+    <text x="692" y="254" fill="#6f665a" font-family="Inter, Arial, sans-serif" font-size="15">Free Google-hosted</text>
+    <text x="692" y="276" fill="#6f665a" font-family="Inter, Arial, sans-serif" font-size="15">web app backend</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="930" y="132" width="196" height="126" rx="18" fill="#edf3e8" stroke="#c5d3bd"/>
+    <text x="968" y="180" fill="#4f684e" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800">Google Doc</text>
+    <text x="968" y="210" fill="#6f665a" font-family="Inter, Arial, sans-serif" font-size="15">Daily entries</text>
+    <text x="968" y="232" fill="#6f665a" font-family="Inter, Arial, sans-serif" font-size="15">organized by date</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="930" y="322" width="196" height="126" rx="18" fill="#f1eadf" stroke="#d8cbb9"/>
+    <text x="956" y="370" fill="#7b5f42" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800">Google Sheet</text>
+    <text x="968" y="400" fill="#6f665a" font-family="Inter, Arial, sans-serif" font-size="15">Task table with</text>
+    <text x="968" y="422" fill="#6f665a" font-family="Inter, Arial, sans-serif" font-size="15">dates and status</text>
+  </g>
+
+  <path d="M528 356C578 356 599 242 650 242" stroke="#7b5f42" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <path d="M856 232C884 222 900 206 930 196" stroke="#7b5f42" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <path d="M856 262C894 292 898 360 930 384" stroke="#7b5f42" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)"/>
+
+  <rect x="72" y="574" width="1054" height="40" rx="20" fill="#efe7d8" stroke="#d8cbb9"/>
+  <circle cx="104" cy="594" r="8" fill="#a75339"/>
+  <text x="124" y="600" fill="#50483f" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="700">Local preview:</text>
+  <text x="246" y="600" fill="#6f665a" font-family="Inter, Arial, sans-serif" font-size="16">browser-only storage for design testing.</text>
+  <circle cx="572" cy="594" r="8" fill="#5b7c54"/>
+  <text x="592" y="600" fill="#50483f" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="700">Shared deployment:</text>
+  <text x="746" y="600" fill="#6f665a" font-family="Inter, Arial, sans-serif" font-size="16">Google-hosted page syncs to the owner's Drive files.</text>
+</svg>

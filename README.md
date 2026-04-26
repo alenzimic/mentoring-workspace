@@ -7,6 +7,14 @@ The app can run in two ways:
 - Local preview: opens in a browser and saves data only on that browser.
 - Google Apps Script web app: the real shared version, backed by a Google Doc and Google Sheet.
 
+## Interface Preview
+
+![Mentoring Workspace web interface](docs/assets/webpage-screenshot.png)
+
+## How It Works
+
+![Mentoring Workspace sync flow](docs/assets/webpage-flow.svg)
+
 ## What It Does
 
 - Write daily progress entries.
