@@ -77,6 +77,8 @@
       blockers: String(log.blockers || "").trim(),
       nextStep: String(log.nextStep || "").trim(),
       createdAt: log.createdAt || new Date().toISOString(),
+      figureName: String(log.figureName || "").trim(),
+      figureDescription: String(log.figureDescription || "").trim(),
     };
   }
 

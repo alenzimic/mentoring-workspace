@@ -238,6 +238,20 @@ h2 {
   color: var(--muted);
 }
 
+.figure-control {
+  display: grid;
+  gap: 10px;
+}
+
+.figure-control input[type="file"] {
+  min-height: 44px;
+  padding: 8px;
+}
+
+.figure-control textarea {
+  min-height: 72px;
+}
+
 .form-actions,
 .modal-actions {
   display: flex;
@@ -389,14 +403,80 @@ h2 {
   font-weight: 750;
 }
 
+.task-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.task-key {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  min-height: 24px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1;
+  padding: 0 8px;
+}
+
+.task-key.terra,
+.calendar-event.terra {
+  border-color: #d9b7a9;
+  background: var(--red-soft);
+  color: var(--red-dark);
+}
+
+.task-key.sage,
+.calendar-event.sage {
+  border-color: #b7c7ad;
+  background: var(--green-soft);
+  color: var(--green);
+}
+
+.task-key.ochre,
+.calendar-event.ochre {
+  border-color: #d7bd83;
+  background: var(--amber-soft);
+  color: var(--amber);
+}
+
+.task-key.clay,
+.calendar-event.clay {
+  border-color: #c9b4a0;
+  background: #eee2d6;
+  color: #684a34;
+}
+
+.task-key.moss,
+.calendar-event.moss {
+  border-color: #b7c7ad;
+  background: #edf1e8;
+  color: #64764c;
+}
+
+.task-key.stone,
+.calendar-event.stone {
+  border-color: var(--line-strong);
+  background: var(--muted-soft);
+  color: var(--ink-soft);
+}
+
 .task-title-button {
   display: block;
   width: 100%;
+  min-width: 0;
   border: 0;
   background: transparent;
   color: var(--text);
   font-weight: 800;
   text-align: left;
+  overflow-wrap: anywhere;
   padding: 0;
 }
 
@@ -603,7 +683,7 @@ h2 {
 
 .timeline-filters {
   display: grid;
-  grid-template-columns: minmax(220px, 1.4fr) repeat(4, minmax(130px, 0.7fr));
+  grid-template-columns: minmax(220px, 1.4fr) repeat(4, minmax(130px, 0.7fr)) minmax(160px, 0.75fr);
   gap: 10px;
   align-items: end;
 }
@@ -615,6 +695,43 @@ h2 {
 .timeline-list {
   display: grid;
   gap: 14px;
+}
+
+.timeline-view-toggle {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.segmented-control {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  overflow: hidden;
+  min-height: 40px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fffdf8;
+}
+
+.segmented-control button {
+  border: 0;
+  border-right: 1px solid var(--line);
+  background: transparent;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.segmented-control button:last-child {
+  border-right: 0;
+}
+
+.segmented-control button.active {
+  background: var(--green-soft);
+  color: var(--green);
 }
 
 .timeline-day {
@@ -666,6 +783,15 @@ h2 {
 .timeline-item strong {
   display: block;
   margin-bottom: 3px;
+}
+
+.timeline-title-line {
+  align-items: flex-start;
+  margin-bottom: 3px;
+}
+
+.timeline-title-line strong {
+  margin-bottom: 0;
 }
 
 .timeline-item p {
@@ -735,6 +861,130 @@ h2 {
 .timeline-badge.deadline {
   background: var(--red-soft);
   color: var(--red-dark);
+}
+
+.timeline-list.calendar-view {
+  gap: 18px;
+}
+
+.calendar-month,
+.calendar-unscheduled {
+  display: grid;
+  gap: 10px;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.calendar-month:first-child,
+.calendar-unscheduled:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.calendar-month h3,
+.calendar-unscheduled h3 {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 15px;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fffdf8;
+}
+
+.calendar-weekday {
+  min-height: 34px;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: var(--muted-soft);
+  color: var(--ink-soft);
+  font-size: 11px;
+  font-weight: 900;
+  padding: 8px;
+  text-align: center;
+}
+
+.calendar-weekday:nth-child(7n) {
+  border-right: 0;
+}
+
+.calendar-day {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 6px;
+  min-height: 132px;
+  min-width: 0;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: #fffdf8;
+  padding: 8px;
+}
+
+.calendar-day:nth-child(7n) {
+  border-right: 0;
+}
+
+.calendar-day.empty {
+  background: #f8f5ed;
+}
+
+.calendar-day.today {
+  box-shadow: inset 0 0 0 2px rgba(79, 111, 82, 0.28);
+}
+
+.calendar-date-number {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.calendar-events {
+  display: grid;
+  align-content: start;
+  gap: 5px;
+  min-width: 0;
+}
+
+.calendar-event {
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-left-width: 4px;
+  border-radius: 6px;
+  background: #fffdf8;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 850;
+  line-height: 1.2;
+  padding: 5px 7px;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+button.calendar-event:hover {
+  border-color: var(--line-strong);
+}
+
+.calendar-event.log {
+  border-left-color: var(--amber);
+  background: #f8f1e4;
+  color: var(--ink-soft);
+}
+
+.calendar-event.do {
+  border-left-color: var(--green);
+}
+
+.calendar-event.deadline {
+  border-left-color: var(--red);
 }
 
 .modal {
@@ -907,6 +1157,15 @@ h2 {
     min-width: 0;
   }
 
+  .timeline-list.calendar-view {
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .calendar-month {
+    min-width: 720px;
+  }
+
   .panel-header {
     display: grid;
   }
@@ -996,6 +1255,17 @@ h2 {
                 <small>The next useful action.</small>
               </span>
               <textarea id="nextStep" name="nextStep" rows="3" placeholder="What should happen next?"></textarea>
+            </label>
+
+            <label class="field-row figure-field">
+              <span>
+                <strong>Figure</strong>
+                <small>Optional image and caption for the Google Doc.</small>
+              </span>
+              <span class="figure-control">
+                <input id="figureInput" name="figure" type="file" accept="image/png,image/jpeg,image/gif">
+                <textarea id="figureDescription" name="figureDescription" rows="2" placeholder="Optional figure description..."></textarea>
+              </span>
             </label>
 
             <div class="form-actions">
@@ -1107,6 +1377,13 @@ h2 {
                 <option value="unscheduled">Unscheduled</option>
               </select>
             </label>
+            <div class="timeline-view-toggle" aria-label="Timeline view">
+              <span>View</span>
+              <div class="segmented-control">
+                <button class="active" id="timelineListViewButton" type="button" aria-pressed="true">List</button>
+                <button id="timelineCalendarViewButton" type="button" aria-pressed="false">Calendar</button>
+              </div>
+            </div>
           </div>
 
           <div class="timeline-list" id="timelineList"></div>
@@ -1422,6 +1699,8 @@ h2 {
       blockers: String(log.blockers || "").trim(),
       nextStep: String(log.nextStep || "").trim(),
       createdAt: log.createdAt || new Date().toISOString(),
+      figureName: String(log.figureName || "").trim(),
+      figureDescription: String(log.figureDescription || "").trim(),
     };
   }
 
@@ -1579,6 +1858,8 @@ h2 {
 (function (window, document) {
   const App = window.MentoringWorkspace = window.MentoringWorkspace || {};
   const { Config, Data, Providers, Utils } = App;
+  const MAX_FIGURE_BYTES = 5 * 1024 * 1024;
+  const TASK_TONES = ["terra", "sage", "ochre", "clay", "moss", "stone"];
 
   const state = {
     data: null,
@@ -1589,6 +1870,7 @@ h2 {
       person: "all",
       status: "all",
       date: "all",
+      view: "list",
     },
     editingTaskId: "",
     provider: null,
@@ -1613,6 +1895,8 @@ h2 {
       logDate: document.querySelector("#logDate"),
       submitLogButton: document.querySelector("#submitLogButton"),
       clearLogButton: document.querySelector("#clearLogButton"),
+      figureInput: document.querySelector("#figureInput"),
+      figureDescription: document.querySelector("#figureDescription"),
       newTaskTitle: document.querySelector("#newTaskTitle"),
       newTaskAssignee: document.querySelector("#newTaskAssignee"),
       newTaskStatus: document.querySelector("#newTaskStatus"),
@@ -1627,6 +1911,8 @@ h2 {
       timelinePersonFilter: document.querySelector("#timelinePersonFilter"),
       timelineStatusFilter: document.querySelector("#timelineStatusFilter"),
       timelineDateFilter: document.querySelector("#timelineDateFilter"),
+      timelineListViewButton: document.querySelector("#timelineListViewButton"),
+      timelineCalendarViewButton: document.querySelector("#timelineCalendarViewButton"),
       timelineSummary: document.querySelector("#timelineSummary"),
       timelineList: document.querySelector("#timelineList"),
       syncMode: document.querySelector("#syncMode"),
@@ -1678,6 +1964,9 @@ h2 {
       els.timelineStatusFilter,
       els.timelineDateFilter,
     ].forEach((control) => control.addEventListener("input", updateTimelineFilters));
+
+    els.timelineListViewButton.addEventListener("click", () => setTimelineView("list"));
+    els.timelineCalendarViewButton.addEventListener("click", () => setTimelineView("calendar"));
 
     els.syncNowButton.addEventListener("click", () => loadState("Synced"));
     els.settingsButton.addEventListener("click", () => {
@@ -1774,15 +2063,18 @@ h2 {
 
     const titleWrap = document.createElement("div");
     titleWrap.className = "task-title";
+    const titleLine = document.createElement("div");
+    titleLine.className = "task-heading";
     const titleButton = document.createElement("button");
     titleButton.className = "task-title-button";
     titleButton.type = "button";
     titleButton.textContent = task.title;
     titleButton.addEventListener("click", () => openTaskDialog(task.id));
+    titleLine.append(renderTaskKey(task), titleButton);
     const meta = document.createElement("span");
     meta.className = "task-meta";
     meta.textContent = taskMeta(task);
-    titleWrap.append(titleButton, meta, renderTaskDatePair(task));
+    titleWrap.append(titleLine, meta, renderTaskDatePair(task));
 
     const status = document.createElement("select");
     status.className = `status-select ${task.status}`;
@@ -1838,7 +2130,7 @@ h2 {
   }
 
   function taskMeta(task) {
-    const parts = [taskCode(task), `${task.owner || "Unassigned"}`];
+    const parts = [task.owner || "Unassigned", Config.statusLabels[task.status]];
     if (!task.scheduledDate && !task.deadline) parts.push("No dates");
     return parts.join(" / ");
   }
@@ -1849,9 +2141,22 @@ h2 {
     return task.status === filter;
   }
 
-  function taskCode(task) {
-    const raw = String(task.id || task.title || "task").replace(/[^a-z0-9]/gi, "");
-    return `#${raw.slice(-4).toUpperCase().padStart(4, "0")}`;
+  function taskIdentity(task) {
+    const index = Math.max(0, state.data.tasks.findIndex((item) => item.id === task.id));
+    const number = index + 1;
+    return {
+      label: `T${number}`,
+      tone: TASK_TONES[index % TASK_TONES.length],
+    };
+  }
+
+  function renderTaskKey(task) {
+    const identity = taskIdentity(task);
+    const key = document.createElement("span");
+    key.className = `task-key ${identity.tone}`;
+    key.textContent = identity.label;
+    key.title = `${identity.label}: ${task.title}`;
+    return key;
   }
 
   function timelineTaskText(task, dateKind) {
@@ -1869,15 +2174,35 @@ h2 {
 
   function renderTimeline() {
     const items = getFilteredTimelineItems();
-    els.timelineSummary.textContent = `${items.length} item${items.length === 1 ? "" : "s"}`;
+    renderTimelineViewToggle();
+    els.timelineSummary.textContent = `${items.length} item${items.length === 1 ? "" : "s"} / ${state.timeline.view}`;
+    els.timelineList.classList.toggle("calendar-view", state.timeline.view === "calendar");
 
     if (!items.length) {
       els.timelineList.innerHTML = `<p class="empty-state">No timeline items match these filters.</p>`;
       return;
     }
 
+    if (state.timeline.view === "calendar") {
+      renderTimelineCalendar(items);
+      return;
+    }
+
     const groups = groupByDate(items);
     els.timelineList.replaceChildren(...groups.map(renderTimelineGroup));
+  }
+
+  function renderTimelineViewToggle() {
+    els.timelineListViewButton.classList.toggle("active", state.timeline.view === "list");
+    els.timelineCalendarViewButton.classList.toggle("active", state.timeline.view === "calendar");
+    els.timelineListViewButton.setAttribute("aria-pressed", String(state.timeline.view === "list"));
+    els.timelineCalendarViewButton.setAttribute("aria-pressed", String(state.timeline.view === "calendar"));
+  }
+
+  function setTimelineView(view) {
+    if (state.timeline.view === view) return;
+    state.timeline.view = view;
+    renderTimeline();
   }
 
   function getFilteredTimelineItems() {
@@ -1889,7 +2214,7 @@ h2 {
       .filter((item) => {
         const query = state.timeline.query;
         if (!query) return true;
-        return [item.title, item.text, item.person, item.label].some((value) => Utils.includesText(value, query));
+        return [item.title, item.text, item.person, item.label, item.identityLabel].some((value) => Utils.includesText(value, query));
       })
       .sort((a, b) => sortDateKey(a.date).localeCompare(sortDateKey(b.date)) || a.title.localeCompare(b.title));
   }
@@ -1897,7 +2222,10 @@ h2 {
   function buildTimelineItems() {
     const items = [];
     state.data.dailyLogs.forEach((log) => {
-      const sections = [log.workedOn, log.notes, log.blockers, log.nextStep].filter(Boolean).join(" ");
+      const figureText = log.figureName || log.figureDescription
+        ? `Figure: ${log.figureDescription || log.figureName}`
+        : "";
+      const sections = [log.workedOn, log.notes, log.blockers, log.nextStep, figureText].filter(Boolean).join(" ");
       items.push({
         id: log.id,
         type: "log",
@@ -1907,10 +2235,12 @@ h2 {
         text: sections || "Entry saved.",
         person: "",
         status: "entry",
+        hasFigure: Boolean(log.figureName || log.figureDescription),
       });
     });
 
     state.data.tasks.forEach((task) => {
+      const identity = taskIdentity(task);
       const dates = [];
       if (task.scheduledDate) dates.push({ date: task.scheduledDate, kind: "do", label: "Do" });
       if (task.deadline) dates.push({ date: task.deadline, kind: "deadline", label: "Due" });
@@ -1925,6 +2255,8 @@ h2 {
           label: date.label,
           title: task.title,
           text: timelineTaskText(task, date.kind),
+          identityLabel: identity.label,
+          identityTone: identity.tone,
           person: task.owner || "Unassigned",
           status: task.status,
           task,
@@ -1975,6 +2307,106 @@ h2 {
     return section;
   }
 
+  function renderTimelineCalendar(items) {
+    const datedItems = items.filter((item) => item.date);
+    const undatedItems = items.filter((item) => !item.date);
+    const months = groupByMonth(datedItems);
+    const sections = months.map(renderCalendarMonth);
+    if (undatedItems.length) sections.push(renderCalendarUnscheduled(undatedItems));
+    els.timelineList.replaceChildren(...sections);
+  }
+
+  function groupByMonth(items) {
+    const map = new Map();
+    items.forEach((item) => {
+      const key = item.date.slice(0, 7);
+      if (!map.has(key)) map.set(key, []);
+      map.get(key).push(item);
+    });
+    return Array.from(map.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([month, monthItems]) => ({ month, items: monthItems }));
+  }
+
+  function renderCalendarMonth(group) {
+    const [year, month] = group.month.split("-").map(Number);
+    const firstDate = new Date(year, month - 1, 1);
+    const daysInMonth = new Date(year, month, 0).getDate();
+    const itemsByDate = groupByDate(group.items).reduce((map, day) => map.set(day.date, day.items), new Map());
+    const section = document.createElement("section");
+    section.className = "calendar-month";
+
+    const heading = document.createElement("h3");
+    heading.textContent = firstDate.toLocaleDateString([], { month: "long", year: "numeric" });
+    section.append(heading);
+
+    const grid = document.createElement("div");
+    grid.className = "calendar-grid";
+    ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].forEach((day) => {
+      const header = document.createElement("div");
+      header.className = "calendar-weekday";
+      header.textContent = day;
+      grid.append(header);
+    });
+
+    for (let index = 0; index < firstDate.getDay(); index += 1) {
+      const empty = document.createElement("div");
+      empty.className = "calendar-day empty";
+      grid.append(empty);
+    }
+
+    for (let day = 1; day <= daysInMonth; day += 1) {
+      const dateKey = `${group.month}-${String(day).padStart(2, "0")}`;
+      grid.append(renderCalendarDay(day, dateKey, itemsByDate.get(dateKey) || []));
+    }
+
+    section.append(grid);
+    return section;
+  }
+
+  function renderCalendarDay(day, dateKey, items) {
+    const cell = document.createElement("div");
+    cell.className = `calendar-day${dateKey === Utils.todayInput() ? " today" : ""}`;
+
+    const number = document.createElement("div");
+    number.className = "calendar-date-number";
+    number.textContent = String(day);
+
+    const events = document.createElement("div");
+    events.className = "calendar-events";
+    events.replaceChildren(...items.map(renderCalendarEvent));
+
+    cell.append(number, events);
+    return cell;
+  }
+
+  function renderCalendarEvent(item) {
+    const event = document.createElement(item.type === "task" ? "button" : "div");
+    event.className = `calendar-event ${item.type} ${item.dateKind || ""} ${item.identityTone || ""}`;
+    if (item.type === "task") {
+      event.type = "button";
+      event.textContent = `${item.identityLabel} ${item.label}: ${item.title}`;
+      event.title = `${item.identityLabel} ${item.label}: ${item.title} / ${item.text}`;
+      event.addEventListener("click", () => openTaskDialog(item.task.id));
+    } else {
+      event.textContent = item.hasFigure ? "Entry + figure" : "Daily entry";
+      event.title = item.text;
+    }
+    return event;
+  }
+
+  function renderCalendarUnscheduled(items) {
+    const section = document.createElement("section");
+    section.className = "calendar-unscheduled";
+    const heading = document.createElement("h3");
+    heading.textContent = "Unscheduled";
+    const list = document.createElement("div");
+    list.className = "timeline-items";
+    list.replaceChildren(...items.map(renderTimelineItem));
+    section.append(heading, list);
+    return section;
+  }
+
   function renderTimelineItem(item) {
     const article = document.createElement("article");
     article.className = `timeline-item ${item.type} ${item.dateKind || ""}`;
@@ -1985,10 +2417,17 @@ h2 {
 
     const body = document.createElement("div");
     const title = document.createElement("strong");
-    title.textContent = item.type === "task" ? `${taskCode(item.task)} ${item.title}` : item.title;
+    title.textContent = item.title;
     const text = document.createElement("p");
     text.textContent = item.text;
-    body.append(title, text);
+    if (item.type === "task") {
+      const titleLine = document.createElement("div");
+      titleLine.className = "task-heading timeline-title-line";
+      titleLine.append(renderTaskKey(item.task), title);
+      body.append(titleLine, text);
+    } else {
+      body.append(title, text);
+    }
     article.append(badge, body);
 
     if (item.type === "task") {
@@ -2030,9 +2469,24 @@ h2 {
   async function submitDailyLog(event) {
     event.preventDefault();
     const formData = Object.fromEntries(new FormData(els.dailyLogForm).entries());
-    const hasContent = ["workedOn", "notes", "blockers", "nextStep"].some((key) => formData[key]?.trim());
+    const figureFile = els.figureInput.files[0];
+    const figureDescription = String(formData.figureDescription || "").trim();
+    const hasContent = ["workedOn", "notes", "blockers", "nextStep"].some((key) => formData[key]?.trim())
+      || Boolean(figureFile);
+    if (figureDescription && !figureFile) {
+      showToast("Attach a figure before adding a figure description");
+      return;
+    }
     if (!hasContent) {
       showToast("Add at least one note before submitting");
+      return;
+    }
+
+    let figurePayload;
+    try {
+      figurePayload = await buildFigurePayload(figureFile, figureDescription);
+    } catch (error) {
+      showToast(error.message);
       return;
     }
 
@@ -2044,6 +2498,7 @@ h2 {
       blockers: formData.blockers.trim(),
       nextStep: formData.nextStep.trim(),
       createdAt: new Date().toISOString(),
+      ...figurePayload,
     };
 
     await runAction("Submitting...", async () => {
@@ -2051,6 +2506,38 @@ h2 {
       clearDailyForm();
       render();
       showToast(state.provider.mode === "google" ? "Submitted to Google Doc" : "Saved locally");
+    });
+  }
+
+  function buildFigurePayload(file, description) {
+    if (!file) {
+      return Promise.resolve({
+        figureName: "",
+        figureMimeType: "",
+        figureDescription: "",
+        figureDataUrl: "",
+      });
+    }
+    if (!file.type || !file.type.startsWith("image/")) {
+      return Promise.reject(new Error("Choose an image file for the figure"));
+    }
+    if (file.size > MAX_FIGURE_BYTES) {
+      return Promise.reject(new Error("Choose a figure under 5 MB"));
+    }
+    return readFileAsDataUrl(file).then((figureDataUrl) => ({
+      figureName: file.name,
+      figureMimeType: file.type,
+      figureDescription: description,
+      figureDataUrl,
+    }));
+  }
+
+  function readFileAsDataUrl(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.addEventListener("load", () => resolve(String(reader.result || "")));
+      reader.addEventListener("error", () => reject(new Error("Could not read the selected figure")));
+      reader.readAsDataURL(file);
     });
   }
 
@@ -2140,6 +2627,7 @@ h2 {
       person: els.timelinePersonFilter.value,
       status: els.timelineStatusFilter.value,
       date: els.timelineDateFilter.value,
+      view: state.timeline.view,
     };
     renderTimeline();
   }

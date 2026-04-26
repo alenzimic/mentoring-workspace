@@ -208,6 +208,8 @@
       blockers: String(log.blockers || "").trim(),
       nextStep: String(log.nextStep || "").trim(),
       createdAt: log.createdAt || new Date().toISOString(),
+      figureName: String(log.figureName || "").trim(),
+      figureDescription: String(log.figureDescription || "").trim(),
     };
   }
 
@@ -365,6 +367,8 @@
 (function (window, document) {
   const App = window.MentoringWorkspace = window.MentoringWorkspace || {};
   const { Config, Data, Providers, Utils } = App;
+  const MAX_FIGURE_BYTES = 5 * 1024 * 1024;
+  const TASK_TONES = ["terra", "sage", "ochre", "clay", "moss", "stone"];
 
   const state = {
     data: null,
@@ -375,6 +379,7 @@
       person: "all",
       status: "all",
       date: "all",
+      view: "list",
     },
     editingTaskId: "",
     provider: null,
@@ -399,6 +404,8 @@
       logDate: document.querySelector("#logDate"),
       submitLogButton: document.querySelector("#submitLogButton"),
       clearLogButton: document.querySelector("#clearLogButton"),
+      figureInput: document.querySelector("#figureInput"),
+      figureDescription: document.querySelector("#figureDescription"),
       newTaskTitle: document.querySelector("#newTaskTitle"),
       newTaskAssignee: document.querySelector("#newTaskAssignee"),
       newTaskStatus: document.querySelector("#newTaskStatus"),
@@ -413,6 +420,8 @@
       timelinePersonFilter: document.querySelector("#timelinePersonFilter"),
       timelineStatusFilter: document.querySelector("#timelineStatusFilter"),
       timelineDateFilter: document.querySelector("#timelineDateFilter"),
+      timelineListViewButton: document.querySelector("#timelineListViewButton"),
+      timelineCalendarViewButton: document.querySelector("#timelineCalendarViewButton"),
       timelineSummary: document.querySelector("#timelineSummary"),
       timelineList: document.querySelector("#timelineList"),
       syncMode: document.querySelector("#syncMode"),
@@ -464,6 +473,9 @@
       els.timelineStatusFilter,
       els.timelineDateFilter,
     ].forEach((control) => control.addEventListener("input", updateTimelineFilters));
+
+    els.timelineListViewButton.addEventListener("click", () => setTimelineView("list"));
+    els.timelineCalendarViewButton.addEventListener("click", () => setTimelineView("calendar"));
 
     els.syncNowButton.addEventListener("click", () => loadState("Synced"));
     els.settingsButton.addEventListener("click", () => {
@@ -560,15 +572,18 @@
 
     const titleWrap = document.createElement("div");
     titleWrap.className = "task-title";
+    const titleLine = document.createElement("div");
+    titleLine.className = "task-heading";
     const titleButton = document.createElement("button");
     titleButton.className = "task-title-button";
     titleButton.type = "button";
     titleButton.textContent = task.title;
     titleButton.addEventListener("click", () => openTaskDialog(task.id));
+    titleLine.append(renderTaskKey(task), titleButton);
     const meta = document.createElement("span");
     meta.className = "task-meta";
     meta.textContent = taskMeta(task);
-    titleWrap.append(titleButton, meta, renderTaskDatePair(task));
+    titleWrap.append(titleLine, meta, renderTaskDatePair(task));
 
     const status = document.createElement("select");
     status.className = `status-select ${task.status}`;
@@ -624,7 +639,7 @@
   }
 
   function taskMeta(task) {
-    const parts = [taskCode(task), `${task.owner || "Unassigned"}`];
+    const parts = [task.owner || "Unassigned", Config.statusLabels[task.status]];
     if (!task.scheduledDate && !task.deadline) parts.push("No dates");
     return parts.join(" / ");
   }
@@ -635,9 +650,22 @@
     return task.status === filter;
   }
 
-  function taskCode(task) {
-    const raw = String(task.id || task.title || "task").replace(/[^a-z0-9]/gi, "");
-    return `#${raw.slice(-4).toUpperCase().padStart(4, "0")}`;
+  function taskIdentity(task) {
+    const index = Math.max(0, state.data.tasks.findIndex((item) => item.id === task.id));
+    const number = index + 1;
+    return {
+      label: `T${number}`,
+      tone: TASK_TONES[index % TASK_TONES.length],
+    };
+  }
+
+  function renderTaskKey(task) {
+    const identity = taskIdentity(task);
+    const key = document.createElement("span");
+    key.className = `task-key ${identity.tone}`;
+    key.textContent = identity.label;
+    key.title = `${identity.label}: ${task.title}`;
+    return key;
   }
 
   function timelineTaskText(task, dateKind) {
@@ -655,15 +683,35 @@
 
   function renderTimeline() {
     const items = getFilteredTimelineItems();
-    els.timelineSummary.textContent = `${items.length} item${items.length === 1 ? "" : "s"}`;
+    renderTimelineViewToggle();
+    els.timelineSummary.textContent = `${items.length} item${items.length === 1 ? "" : "s"} / ${state.timeline.view}`;
+    els.timelineList.classList.toggle("calendar-view", state.timeline.view === "calendar");
 
     if (!items.length) {
       els.timelineList.innerHTML = `<p class="empty-state">No timeline items match these filters.</p>`;
       return;
     }
 
+    if (state.timeline.view === "calendar") {
+      renderTimelineCalendar(items);
+      return;
+    }
+
     const groups = groupByDate(items);
     els.timelineList.replaceChildren(...groups.map(renderTimelineGroup));
+  }
+
+  function renderTimelineViewToggle() {
+    els.timelineListViewButton.classList.toggle("active", state.timeline.view === "list");
+    els.timelineCalendarViewButton.classList.toggle("active", state.timeline.view === "calendar");
+    els.timelineListViewButton.setAttribute("aria-pressed", String(state.timeline.view === "list"));
+    els.timelineCalendarViewButton.setAttribute("aria-pressed", String(state.timeline.view === "calendar"));
+  }
+
+  function setTimelineView(view) {
+    if (state.timeline.view === view) return;
+    state.timeline.view = view;
+    renderTimeline();
   }
 
   function getFilteredTimelineItems() {
@@ -675,7 +723,7 @@
       .filter((item) => {
         const query = state.timeline.query;
         if (!query) return true;
-        return [item.title, item.text, item.person, item.label].some((value) => Utils.includesText(value, query));
+        return [item.title, item.text, item.person, item.label, item.identityLabel].some((value) => Utils.includesText(value, query));
       })
       .sort((a, b) => sortDateKey(a.date).localeCompare(sortDateKey(b.date)) || a.title.localeCompare(b.title));
   }
@@ -683,7 +731,10 @@
   function buildTimelineItems() {
     const items = [];
     state.data.dailyLogs.forEach((log) => {
-      const sections = [log.workedOn, log.notes, log.blockers, log.nextStep].filter(Boolean).join(" ");
+      const figureText = log.figureName || log.figureDescription
+        ? `Figure: ${log.figureDescription || log.figureName}`
+        : "";
+      const sections = [log.workedOn, log.notes, log.blockers, log.nextStep, figureText].filter(Boolean).join(" ");
       items.push({
         id: log.id,
         type: "log",
@@ -693,10 +744,12 @@
         text: sections || "Entry saved.",
         person: "",
         status: "entry",
+        hasFigure: Boolean(log.figureName || log.figureDescription),
       });
     });
 
     state.data.tasks.forEach((task) => {
+      const identity = taskIdentity(task);
       const dates = [];
       if (task.scheduledDate) dates.push({ date: task.scheduledDate, kind: "do", label: "Do" });
       if (task.deadline) dates.push({ date: task.deadline, kind: "deadline", label: "Due" });
@@ -711,6 +764,8 @@
           label: date.label,
           title: task.title,
           text: timelineTaskText(task, date.kind),
+          identityLabel: identity.label,
+          identityTone: identity.tone,
           person: task.owner || "Unassigned",
           status: task.status,
           task,
@@ -761,6 +816,106 @@
     return section;
   }
 
+  function renderTimelineCalendar(items) {
+    const datedItems = items.filter((item) => item.date);
+    const undatedItems = items.filter((item) => !item.date);
+    const months = groupByMonth(datedItems);
+    const sections = months.map(renderCalendarMonth);
+    if (undatedItems.length) sections.push(renderCalendarUnscheduled(undatedItems));
+    els.timelineList.replaceChildren(...sections);
+  }
+
+  function groupByMonth(items) {
+    const map = new Map();
+    items.forEach((item) => {
+      const key = item.date.slice(0, 7);
+      if (!map.has(key)) map.set(key, []);
+      map.get(key).push(item);
+    });
+    return Array.from(map.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([month, monthItems]) => ({ month, items: monthItems }));
+  }
+
+  function renderCalendarMonth(group) {
+    const [year, month] = group.month.split("-").map(Number);
+    const firstDate = new Date(year, month - 1, 1);
+    const daysInMonth = new Date(year, month, 0).getDate();
+    const itemsByDate = groupByDate(group.items).reduce((map, day) => map.set(day.date, day.items), new Map());
+    const section = document.createElement("section");
+    section.className = "calendar-month";
+
+    const heading = document.createElement("h3");
+    heading.textContent = firstDate.toLocaleDateString([], { month: "long", year: "numeric" });
+    section.append(heading);
+
+    const grid = document.createElement("div");
+    grid.className = "calendar-grid";
+    ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].forEach((day) => {
+      const header = document.createElement("div");
+      header.className = "calendar-weekday";
+      header.textContent = day;
+      grid.append(header);
+    });
+
+    for (let index = 0; index < firstDate.getDay(); index += 1) {
+      const empty = document.createElement("div");
+      empty.className = "calendar-day empty";
+      grid.append(empty);
+    }
+
+    for (let day = 1; day <= daysInMonth; day += 1) {
+      const dateKey = `${group.month}-${String(day).padStart(2, "0")}`;
+      grid.append(renderCalendarDay(day, dateKey, itemsByDate.get(dateKey) || []));
+    }
+
+    section.append(grid);
+    return section;
+  }
+
+  function renderCalendarDay(day, dateKey, items) {
+    const cell = document.createElement("div");
+    cell.className = `calendar-day${dateKey === Utils.todayInput() ? " today" : ""}`;
+
+    const number = document.createElement("div");
+    number.className = "calendar-date-number";
+    number.textContent = String(day);
+
+    const events = document.createElement("div");
+    events.className = "calendar-events";
+    events.replaceChildren(...items.map(renderCalendarEvent));
+
+    cell.append(number, events);
+    return cell;
+  }
+
+  function renderCalendarEvent(item) {
+    const event = document.createElement(item.type === "task" ? "button" : "div");
+    event.className = `calendar-event ${item.type} ${item.dateKind || ""} ${item.identityTone || ""}`;
+    if (item.type === "task") {
+      event.type = "button";
+      event.textContent = `${item.identityLabel} ${item.label}: ${item.title}`;
+      event.title = `${item.identityLabel} ${item.label}: ${item.title} / ${item.text}`;
+      event.addEventListener("click", () => openTaskDialog(item.task.id));
+    } else {
+      event.textContent = item.hasFigure ? "Entry + figure" : "Daily entry";
+      event.title = item.text;
+    }
+    return event;
+  }
+
+  function renderCalendarUnscheduled(items) {
+    const section = document.createElement("section");
+    section.className = "calendar-unscheduled";
+    const heading = document.createElement("h3");
+    heading.textContent = "Unscheduled";
+    const list = document.createElement("div");
+    list.className = "timeline-items";
+    list.replaceChildren(...items.map(renderTimelineItem));
+    section.append(heading, list);
+    return section;
+  }
+
   function renderTimelineItem(item) {
     const article = document.createElement("article");
     article.className = `timeline-item ${item.type} ${item.dateKind || ""}`;
@@ -771,10 +926,17 @@
 
     const body = document.createElement("div");
     const title = document.createElement("strong");
-    title.textContent = item.type === "task" ? `${taskCode(item.task)} ${item.title}` : item.title;
+    title.textContent = item.title;
     const text = document.createElement("p");
     text.textContent = item.text;
-    body.append(title, text);
+    if (item.type === "task") {
+      const titleLine = document.createElement("div");
+      titleLine.className = "task-heading timeline-title-line";
+      titleLine.append(renderTaskKey(item.task), title);
+      body.append(titleLine, text);
+    } else {
+      body.append(title, text);
+    }
     article.append(badge, body);
 
     if (item.type === "task") {
@@ -816,9 +978,24 @@
   async function submitDailyLog(event) {
     event.preventDefault();
     const formData = Object.fromEntries(new FormData(els.dailyLogForm).entries());
-    const hasContent = ["workedOn", "notes", "blockers", "nextStep"].some((key) => formData[key]?.trim());
+    const figureFile = els.figureInput.files[0];
+    const figureDescription = String(formData.figureDescription || "").trim();
+    const hasContent = ["workedOn", "notes", "blockers", "nextStep"].some((key) => formData[key]?.trim())
+      || Boolean(figureFile);
+    if (figureDescription && !figureFile) {
+      showToast("Attach a figure before adding a figure description");
+      return;
+    }
     if (!hasContent) {
       showToast("Add at least one note before submitting");
+      return;
+    }
+
+    let figurePayload;
+    try {
+      figurePayload = await buildFigurePayload(figureFile, figureDescription);
+    } catch (error) {
+      showToast(error.message);
       return;
     }
 
@@ -830,6 +1007,7 @@
       blockers: formData.blockers.trim(),
       nextStep: formData.nextStep.trim(),
       createdAt: new Date().toISOString(),
+      ...figurePayload,
     };
 
     await runAction("Submitting...", async () => {
@@ -837,6 +1015,38 @@
       clearDailyForm();
       render();
       showToast(state.provider.mode === "google" ? "Submitted to Google Doc" : "Saved locally");
+    });
+  }
+
+  function buildFigurePayload(file, description) {
+    if (!file) {
+      return Promise.resolve({
+        figureName: "",
+        figureMimeType: "",
+        figureDescription: "",
+        figureDataUrl: "",
+      });
+    }
+    if (!file.type || !file.type.startsWith("image/")) {
+      return Promise.reject(new Error("Choose an image file for the figure"));
+    }
+    if (file.size > MAX_FIGURE_BYTES) {
+      return Promise.reject(new Error("Choose a figure under 5 MB"));
+    }
+    return readFileAsDataUrl(file).then((figureDataUrl) => ({
+      figureName: file.name,
+      figureMimeType: file.type,
+      figureDescription: description,
+      figureDataUrl,
+    }));
+  }
+
+  function readFileAsDataUrl(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.addEventListener("load", () => resolve(String(reader.result || "")));
+      reader.addEventListener("error", () => reject(new Error("Could not read the selected figure")));
+      reader.readAsDataURL(file);
     });
   }
 
@@ -926,6 +1136,7 @@
       person: els.timelinePersonFilter.value,
       status: els.timelineStatusFilter.value,
       date: els.timelineDateFilter.value,
+      view: state.timeline.view,
     };
     renderTimeline();
   }

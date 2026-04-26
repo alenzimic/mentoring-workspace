@@ -65,6 +65,17 @@
               <textarea id="nextStep" name="nextStep" rows="3" placeholder="What should happen next?"></textarea>
             </label>
 
+            <label class="field-row figure-field">
+              <span>
+                <strong>Figure</strong>
+                <small>Optional image and caption for the Google Doc.</small>
+              </span>
+              <span class="figure-control">
+                <input id="figureInput" name="figure" type="file" accept="image/png,image/jpeg,image/gif">
+                <textarea id="figureDescription" name="figureDescription" rows="2" placeholder="Optional figure description..."></textarea>
+              </span>
+            </label>
+
             <div class="form-actions">
               <button class="primary-button" id="submitLogButton" type="submit">Submit entry</button>
               <button class="secondary-button" id="clearLogButton" type="button">Clear</button>
@@ -174,6 +185,13 @@
                 <option value="unscheduled">Unscheduled</option>
               </select>
             </label>
+            <div class="timeline-view-toggle" aria-label="Timeline view">
+              <span>View</span>
+              <div class="segmented-control">
+                <button class="active" id="timelineListViewButton" type="button" aria-pressed="true">List</button>
+                <button id="timelineCalendarViewButton" type="button" aria-pressed="false">Calendar</button>
+              </div>
+            </div>
           </div>
 
           <div class="timeline-list" id="timelineList"></div>

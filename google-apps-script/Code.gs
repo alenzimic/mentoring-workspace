@@ -17,9 +17,10 @@ const CONFIG = {
 };
 
 const TASK_HEADERS = ["id", "title", "status", "assignee", "updatedAt", "doDate", "deadline"];
-const LOG_HEADERS = ["id", "date", "workedOn", "notes", "blockers", "nextStep", "createdAt"];
+const LOG_HEADERS = ["id", "date", "workedOn", "notes", "blockers", "nextStep", "createdAt", "figureName", "figureDescription"];
 const STATUS_VALUES = ["not_started", "in_progress", "waiting", "blocked", "done"];
 const STATUS_ALIASES = { open: "in_progress" };
+const MAX_FIGURE_BYTES = 5 * 1024 * 1024;
 
 function doGet() {
   return HtmlService.createHtmlOutputFromFile("Index")
@@ -109,6 +110,8 @@ function readState_() {
       blockers: log.blockers,
       nextStep: log.nextStep,
       createdAt: log.createdAt,
+      figureName: log.figureName,
+      figureDescription: log.figureDescription,
     })),
     sync: {
       mode: "google",
@@ -210,11 +213,13 @@ function formatLogSheet_(sheet) {
   ensureHeaders_(sheet, LOG_HEADERS);
   sheet.getRange("A:A").setNumberFormat("@");
   sheet.getRange("B:B").setNumberFormat("yyyy-mm-dd");
-  sheet.getRange("C:F").setWrap(true);
+  sheet.getRange("C:I").setWrap(true);
   sheet.setColumnWidths(1, 1, 190);
   sheet.setColumnWidths(2, 1, 110);
   sheet.setColumnWidths(3, 4, 260);
   sheet.setColumnWidths(7, 1, 210);
+  sheet.setColumnWidths(8, 1, 180);
+  sheet.setColumnWidths(9, 1, 280);
 }
 
 function withProjectLock_(callback) {
@@ -270,6 +275,7 @@ function appendLogToDocument_(log) {
   appendSection_(body, "Notes", log.notes);
   appendSection_(body, "Blockers", log.blockers);
   appendSection_(body, "Next step", log.nextStep);
+  appendFigure_(body, log);
   body.appendParagraph("");
   document.saveAndClose();
 }
@@ -278,6 +284,39 @@ function appendSection_(body, label, value) {
   if (!value) return;
   body.appendParagraph(label).setHeading(DocumentApp.ParagraphHeading.HEADING3);
   body.appendParagraph(String(value));
+}
+
+function appendFigure_(body, log) {
+  const blob = figureBlobFromDataUrl_(log.figureDataUrl, log.figureMimeType, log.figureName);
+  if (!blob) return;
+
+  body.appendParagraph("Figure").setHeading(DocumentApp.ParagraphHeading.HEADING3);
+  const image = body.appendImage(blob);
+  const width = image.getWidth();
+  const height = image.getHeight();
+  const maxWidth = 520;
+  if (width > maxWidth) {
+    image.setWidth(maxWidth);
+    image.setHeight(Math.round((height / width) * maxWidth));
+  }
+  if (log.figureDescription) body.appendParagraph(String(log.figureDescription)).editAsText().setItalic(true);
+}
+
+function figureBlobFromDataUrl_(dataUrl, fallbackMimeType, fallbackName) {
+  const value = String(dataUrl || "").trim();
+  if (!value) return null;
+
+  const match = value.match(/^data:([^;]+);base64,([\s\S]+)$/);
+  if (!match) throw new Error("The figure upload could not be decoded.");
+
+  const mimeType = String(match[1] || fallbackMimeType || "").toLowerCase();
+  if (!/^image\/(png|jpe?g|gif)$/.test(mimeType)) {
+    throw new Error("Only PNG, JPG, or GIF figures are supported.");
+  }
+
+  const bytes = Utilities.base64Decode(match[2]);
+  if (bytes.length > MAX_FIGURE_BYTES) throw new Error("Choose a figure under 5 MB.");
+  return Utilities.newBlob(bytes, mimeType, fallbackName || "figure");
 }
 
 function normalizeTask_(task) {
@@ -306,6 +345,10 @@ function normalizeLog_(log) {
     blockers: String(log.blockers || "").trim(),
     nextStep: String(log.nextStep || "").trim(),
     createdAt: log.createdAt || new Date().toISOString(),
+    figureName: String(log.figureName || "").trim(),
+    figureDescription: String(log.figureDescription || "").trim(),
+    figureMimeType: String(log.figureMimeType || "").trim(),
+    figureDataUrl: String(log.figureDataUrl || "").trim(),
   };
 }
 
