@@ -16,7 +16,7 @@ The app can run in two ways:
 
 ![Mentoring Workspace web interface](docs/assets/webpage-screenshot.png)
 
-### New Feature Screenshots
+### Feature Screenshots
 
 Figure uploads add optional images and a shared caption to each daily entry. Images are appended to the Google Doc, while the Sheet keeps the figure filenames and description.
 
