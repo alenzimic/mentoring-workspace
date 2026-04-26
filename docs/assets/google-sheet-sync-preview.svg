@@ -1,0 +1,106 @@
+<svg width="1200" height="780" viewBox="0 0 1200 780" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Google Sheets sync preview</title>
+  <desc id="desc">A placeholder screenshot-style preview of tasks and daily log rows synced to Google Sheets from the mentoring workspace app.</desc>
+  <rect width="1200" height="780" fill="#eef1f4"/>
+  <rect x="0" y="0" width="1200" height="64" fill="#ffffff"/>
+  <rect x="22" y="18" width="28" height="30" rx="4" fill="#0f9d58"/>
+  <text x="66" y="39" fill="#202124" font-family="Arial, sans-serif" font-size="22" font-weight="600">Mentoring Task Tracker</text>
+  <text x="66" y="57" fill="#5f6368" font-family="Arial, sans-serif" font-size="13">Saved to Drive</text>
+  <rect x="1024" y="18" width="108" height="34" rx="17" fill="#c2e7ff"/>
+  <text x="1058" y="40" fill="#174ea6" font-family="Arial, sans-serif" font-size="14" font-weight="700">Share</text>
+  <rect x="0" y="64" width="1200" height="48" fill="#ffffff"/>
+  <text x="28" y="94" fill="#5f6368" font-family="Arial, sans-serif" font-size="13">File</text>
+  <text x="78" y="94" fill="#5f6368" font-family="Arial, sans-serif" font-size="13">Edit</text>
+  <text x="128" y="94" fill="#5f6368" font-family="Arial, sans-serif" font-size="13">View</text>
+  <text x="188" y="94" fill="#5f6368" font-family="Arial, sans-serif" font-size="13">Insert</text>
+  <text x="256" y="94" fill="#5f6368" font-family="Arial, sans-serif" font-size="13">Format</text>
+  <text x="344" y="94" fill="#5f6368" font-family="Arial, sans-serif" font-size="13">Data</text>
+  <text x="404" y="94" fill="#5f6368" font-family="Arial, sans-serif" font-size="13">Tools</text>
+  <line x1="0" y1="112" x2="1200" y2="112" stroke="#dadce0"/>
+
+  <rect x="30" y="128" width="1140" height="580" fill="#ffffff" stroke="#dadce0"/>
+  <rect x="30" y="128" width="42" height="36" fill="#f8fafd"/>
+  <rect x="72" y="128" width="152" height="36" fill="#f8fafd"/>
+  <rect x="224" y="128" width="330" height="36" fill="#f8fafd"/>
+  <rect x="554" y="128" width="138" height="36" fill="#f8fafd"/>
+  <rect x="692" y="128" width="150" height="36" fill="#f8fafd"/>
+  <rect x="842" y="128" width="205" height="36" fill="#f8fafd"/>
+  <rect x="1047" y="128" width="123" height="36" fill="#f8fafd"/>
+  <text x="88" y="151" fill="#5f6368" font-family="Arial, sans-serif" font-size="13">A</text>
+  <text x="240" y="151" fill="#5f6368" font-family="Arial, sans-serif" font-size="13">B</text>
+  <text x="570" y="151" fill="#5f6368" font-family="Arial, sans-serif" font-size="13">C</text>
+  <text x="708" y="151" fill="#5f6368" font-family="Arial, sans-serif" font-size="13">D</text>
+  <text x="858" y="151" fill="#5f6368" font-family="Arial, sans-serif" font-size="13">E</text>
+  <text x="1063" y="151" fill="#5f6368" font-family="Arial, sans-serif" font-size="13">F</text>
+
+  <g font-family="Arial, sans-serif" font-size="14">
+    <rect x="30" y="164" width="42" height="34" fill="#f8fafd"/>
+    <text x="48" y="186" fill="#5f6368">1</text>
+    <rect x="72" y="164" width="152" height="34" fill="#e5eadf"/>
+    <rect x="224" y="164" width="330" height="34" fill="#e5eadf"/>
+    <rect x="554" y="164" width="138" height="34" fill="#e5eadf"/>
+    <rect x="692" y="164" width="150" height="34" fill="#e5eadf"/>
+    <rect x="842" y="164" width="205" height="34" fill="#e5eadf"/>
+    <rect x="1047" y="164" width="123" height="34" fill="#e5eadf"/>
+    <text x="86" y="186" fill="#202124" font-weight="700">id</text>
+    <text x="238" y="186" fill="#202124" font-weight="700">title</text>
+    <text x="568" y="186" fill="#202124" font-weight="700">status</text>
+    <text x="706" y="186" fill="#202124" font-weight="700">assignee</text>
+    <text x="856" y="186" fill="#202124" font-weight="700">updatedAt</text>
+    <text x="1061" y="186" fill="#202124" font-weight="700">doDate</text>
+
+    <rect x="30" y="198" width="42" height="48" fill="#ffffff"/>
+    <text x="48" y="226" fill="#5f6368">2</text>
+    <text x="86" y="226" fill="#202124">task-01</text>
+    <text x="238" y="226" fill="#202124">Define success criteria</text>
+    <text x="568" y="226" fill="#4f684e">in_progress</text>
+    <text x="706" y="226" fill="#202124">Mentor</text>
+    <text x="856" y="226" fill="#202124">2026-04-26T14:05</text>
+    <text x="1061" y="226" fill="#202124">2026-06-01</text>
+
+    <rect x="30" y="246" width="42" height="48" fill="#fdfcf9"/>
+    <text x="48" y="274" fill="#5f6368">3</text>
+    <text x="86" y="274" fill="#202124">task-02</text>
+    <text x="238" y="274" fill="#202124">Review background materials</text>
+    <text x="568" y="274" fill="#7b5f42">waiting</text>
+    <text x="706" y="274" fill="#202124">Mentee</text>
+    <text x="856" y="274" fill="#202124">2026-04-26T14:06</text>
+    <text x="1061" y="274" fill="#202124">2026-06-03</text>
+
+    <rect x="30" y="294" width="42" height="48" fill="#ffffff"/>
+    <text x="48" y="322" fill="#5f6368">4</text>
+    <text x="86" y="322" fill="#202124">task-03</text>
+    <text x="238" y="322" fill="#202124">Prepare summary plots</text>
+    <text x="568" y="322" fill="#a75339">not_started</text>
+    <text x="706" y="322" fill="#202124">Mentee</text>
+    <text x="856" y="322" fill="#202124">2026-04-26T14:08</text>
+    <text x="1061" y="322" fill="#202124">2026-06-05</text>
+  </g>
+
+  <g stroke="#dadce0">
+    <line x1="72" y1="128" x2="72" y2="708"/>
+    <line x1="224" y1="128" x2="224" y2="708"/>
+    <line x1="554" y1="128" x2="554" y2="708"/>
+    <line x1="692" y1="128" x2="692" y2="708"/>
+    <line x1="842" y1="128" x2="842" y2="708"/>
+    <line x1="1047" y1="128" x2="1047" y2="708"/>
+    <line x1="1170" y1="128" x2="1170" y2="708"/>
+    <line x1="30" y1="164" x2="1170" y2="164"/>
+    <line x1="30" y1="198" x2="1170" y2="198"/>
+    <line x1="30" y1="246" x2="1170" y2="246"/>
+    <line x1="30" y1="294" x2="1170" y2="294"/>
+    <line x1="30" y1="342" x2="1170" y2="342"/>
+  </g>
+
+  <rect x="30" y="708" width="1140" height="44" fill="#ffffff" stroke="#dadce0"/>
+  <rect x="70" y="716" width="92" height="28" rx="14" fill="#e6f4ea"/>
+  <text x="100" y="735" fill="#137333" font-family="Arial, sans-serif" font-size="13" font-weight="700">Tasks</text>
+  <rect x="174" y="716" width="116" height="28" rx="14" fill="#f1f3f4"/>
+  <text x="202" y="735" fill="#5f6368" font-family="Arial, sans-serif" font-size="13" font-weight="700">Daily Log</text>
+
+  <rect x="824" y="424" width="290" height="142" rx="18" fill="#fbf8f1" stroke="#d8cbb9"/>
+  <text x="856" y="468" fill="#7b5f42" font-family="Arial, sans-serif" font-size="20" font-weight="800">Updated by the app</text>
+  <text x="856" y="502" fill="#5f6368" font-family="Arial, sans-serif" font-size="15">Task edits become rows in the</text>
+  <text x="856" y="526" fill="#5f6368" font-family="Arial, sans-serif" font-size="15">Google Sheet immediately.</text>
+  <text x="856" y="552" fill="#5f6368" font-family="Arial, sans-serif" font-size="12">Example data only</text>
+</svg>

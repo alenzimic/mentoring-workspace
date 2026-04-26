@@ -1,0 +1,58 @@
+<svg width="1200" height="780" viewBox="0 0 1200 780" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Google Docs sync preview</title>
+  <desc id="desc">A placeholder screenshot-style preview of daily entries appended to a Google Doc from the mentoring workspace app.</desc>
+  <rect width="1200" height="780" fill="#eef1f4"/>
+  <rect x="0" y="0" width="1200" height="64" fill="#ffffff"/>
+  <rect x="22" y="18" width="28" height="30" rx="4" fill="#4285f4"/>
+  <text x="66" y="39" fill="#202124" font-family="Arial, sans-serif" font-size="22" font-weight="600">Mentoring Daily Log</text>
+  <text x="66" y="57" fill="#5f6368" font-family="Arial, sans-serif" font-size="13">Saved to Drive</text>
+  <rect x="1024" y="18" width="108" height="34" rx="17" fill="#c2e7ff"/>
+  <text x="1058" y="40" fill="#174ea6" font-family="Arial, sans-serif" font-size="14" font-weight="700">Share</text>
+  <rect x="0" y="64" width="1200" height="48" fill="#ffffff"/>
+  <rect x="20" y="77" width="96" height="24" rx="12" fill="#f1f3f4"/>
+  <text x="42" y="94" fill="#5f6368" font-family="Arial, sans-serif" font-size="13">Menus</text>
+  <text x="145" y="94" fill="#5f6368" font-family="Arial, sans-serif" font-size="13">Undo</text>
+  <text x="202" y="94" fill="#5f6368" font-family="Arial, sans-serif" font-size="13">Redo</text>
+  <text x="264" y="94" fill="#5f6368" font-family="Arial, sans-serif" font-size="13">100%</text>
+  <text x="334" y="94" fill="#5f6368" font-family="Arial, sans-serif" font-size="13">Normal text</text>
+  <text x="446" y="94" fill="#5f6368" font-family="Arial, sans-serif" font-size="13">Arial</text>
+  <text x="520" y="94" fill="#5f6368" font-family="Arial, sans-serif" font-size="13">11</text>
+  <line x1="0" y1="112" x2="1200" y2="112" stroke="#dadce0"/>
+
+  <rect x="78" y="150" width="232" height="575" fill="#ffffff"/>
+  <text x="102" y="184" fill="#5f6368" font-family="Arial, sans-serif" font-size="14" font-weight="700">Document outline</text>
+  <line x1="116" y1="214" x2="116" y2="650" stroke="#d2e3fc" stroke-width="3"/>
+  <text x="138" y="226" fill="#1967d2" font-family="Arial, sans-serif" font-size="13" font-weight="700">Mentoring Workspace</text>
+  <text x="154" y="258" fill="#3c4043" font-family="Arial, sans-serif" font-size="13">April 25, 2026</text>
+  <text x="170" y="290" fill="#5f6368" font-family="Arial, sans-serif" font-size="12">Worked on</text>
+  <text x="170" y="322" fill="#5f6368" font-family="Arial, sans-serif" font-size="12">Notes</text>
+  <text x="170" y="354" fill="#5f6368" font-family="Arial, sans-serif" font-size="12">Next step</text>
+  <text x="154" y="398" fill="#3c4043" font-family="Arial, sans-serif" font-size="13">April 26, 2026</text>
+  <text x="170" y="430" fill="#5f6368" font-family="Arial, sans-serif" font-size="12">Worked on</text>
+  <text x="170" y="462" fill="#5f6368" font-family="Arial, sans-serif" font-size="12">Blockers</text>
+  <text x="170" y="494" fill="#5f6368" font-family="Arial, sans-serif" font-size="12">Next step</text>
+
+  <rect x="360" y="140" width="530" height="605" fill="#ffffff" stroke="#dadce0"/>
+  <text x="420" y="217" fill="#202124" font-family="Arial, sans-serif" font-size="30" font-weight="700">Mentoring Workspace</text>
+  <text x="420" y="249" fill="#202124" font-family="Arial, sans-serif" font-size="14">Mentor: Mentor</text>
+  <text x="420" y="270" fill="#202124" font-family="Arial, sans-serif" font-size="14">Mentee: Mentee</text>
+  <text x="420" y="291" fill="#202124" font-family="Arial, sans-serif" font-size="14">People: Mentor, Mentee</text>
+
+  <text x="420" y="348" fill="#202124" font-family="Arial, sans-serif" font-size="24" font-weight="700">April 25, 2026</text>
+  <text x="420" y="394" fill="#5f6368" font-family="Arial, sans-serif" font-size="18" font-weight="700">Worked on</text>
+  <text x="420" y="421" fill="#202124" font-family="Arial, sans-serif" font-size="15">Finished literature notes and tested the analysis script.</text>
+  <text x="420" y="469" fill="#5f6368" font-family="Arial, sans-serif" font-size="18" font-weight="700">Notes</text>
+  <text x="420" y="496" fill="#202124" font-family="Arial, sans-serif" font-size="15">Dataset import now runs without warnings.</text>
+  <text x="420" y="544" fill="#5f6368" font-family="Arial, sans-serif" font-size="18" font-weight="700">Next step</text>
+  <text x="420" y="571" fill="#202124" font-family="Arial, sans-serif" font-size="15">Prepare summary plots for the next meeting.</text>
+
+  <text x="420" y="638" fill="#202124" font-family="Arial, sans-serif" font-size="24" font-weight="700">April 26, 2026</text>
+  <text x="420" y="684" fill="#5f6368" font-family="Arial, sans-serif" font-size="18" font-weight="700">Worked on</text>
+  <text x="420" y="711" fill="#202124" font-family="Arial, sans-serif" font-size="15">Reviewed task progress and added follow-up questions.</text>
+
+  <rect x="930" y="178" width="208" height="132" rx="18" fill="#edf3e8" stroke="#c5d3bd"/>
+  <text x="958" y="220" fill="#4f684e" font-family="Arial, sans-serif" font-size="18" font-weight="800">Updated by the app</text>
+  <text x="958" y="252" fill="#4f684e" font-family="Arial, sans-serif" font-size="14">Each submitted daily</text>
+  <text x="958" y="274" fill="#4f684e" font-family="Arial, sans-serif" font-size="14">entry is appended here.</text>
+  <text x="958" y="296" fill="#4f684e" font-family="Arial, sans-serif" font-size="12">Example data only</text>
+</svg>

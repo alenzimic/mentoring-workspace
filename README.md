@@ -15,6 +15,20 @@ The app can run in two ways:
 
 ![Mentoring Workspace sync flow](docs/assets/webpage-flow.svg)
 
+## Google Sync Preview
+
+These screenshots use example data only. In a real deployment, daily entries append to the Google Doc and task edits update rows in the Google Sheet.
+
+![Google Docs daily log sync preview](docs/assets/google-doc-sync-preview.png)
+
+![Google Sheets task tracker sync preview](docs/assets/google-sheet-sync-preview.png)
+
+## Sharing A Workspace
+
+People who use the web app do not receive access to the deployer's Google Drive folders. The app runs through Google Apps Script and can only read or write the specific document and spreadsheet used by the project.
+
+With the recommended deployment setting, `Anyone with Google account`, any signed-in Google user who has the web app URL can view and update that workspace through the app. For narrower access, deploy within your organization when available, or add an app-level allowlist before sharing the URL.
+
 ## What It Does
 
 - Write daily progress entries.
