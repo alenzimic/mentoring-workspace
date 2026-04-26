@@ -7,6 +7,11 @@ The app can run in two ways:
 - Local preview: opens in a browser and saves data only on that browser.
 - Google Apps Script web app: the real shared version, backed by a Google Doc and Google Sheet.
 
+## Project Links
+
+- Source code: [github.com/alenzimic/mentoring-workspace](https://github.com/alenzimic/mentoring-workspace)
+- Static preview: [alenzimic.github.io/mentoring-workspace](https://alenzimic.github.io/mentoring-workspace/)
+
 ## Interface Preview
 
 ![Mentoring Workspace web interface](docs/assets/webpage-screenshot.png)
@@ -83,6 +88,12 @@ Local preview uses browser `localStorage`, so it is not shared across people or 
 ## GitHub Pages
 
 GitHub Pages can publish a free static preview of the interface. That preview is useful for showing the design, but it cannot securely write to Google Docs or Google Sheets by itself.
+
+Current static preview:
+
+```text
+https://alenzimic.github.io/mentoring-workspace/
+```
 
 For real collaboration, use the Google Apps Script web app URL.
 

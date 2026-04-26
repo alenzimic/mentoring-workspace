@@ -7,6 +7,18 @@ This project is safe to publish as a public source repository as long as you kee
 - Use GitHub for source code and optional static preview.
 - Use Google Apps Script for the real collaborative app that syncs to Google Docs and Google Sheets.
 
+Current public source repository:
+
+```text
+https://github.com/alenzimic/mentoring-workspace
+```
+
+Current static preview:
+
+```text
+https://alenzimic.github.io/mentoring-workspace/
+```
+
 ## Create A Public Repository
 
 From this folder:

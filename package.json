@@ -3,6 +3,14 @@
   "version": "1.0.0",
   "description": "A minimal mentor/mentee collaboration tracker with Google Docs and Sheets sync.",
   "license": "MIT",
+  "homepage": "https://alenzimic.github.io/mentoring-workspace/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alenzimic/mentoring-workspace.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alenzimic/mentoring-workspace/issues"
+  },
   "private": true,
   "scripts": {
     "start": "python3 -m http.server 8766",
