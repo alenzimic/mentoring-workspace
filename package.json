@@ -1,0 +1,13 @@
+{
+  "name": "mentoring-workspace",
+  "version": "1.0.0",
+  "description": "A minimal mentor/mentee collaboration tracker with Google Docs and Sheets sync.",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "python3 -m http.server 8766",
+    "build:client": "node tools/build-apps-script-index.js",
+    "build:apps-script": "node tools/build-apps-script-index.js",
+    "check": "node --check app.js && node --check tools/build-apps-script-index.js && cp google-apps-script/Code.gs /tmp/mentoring-code-check.js && node --check /tmp/mentoring-code-check.js"
+  }
+}
