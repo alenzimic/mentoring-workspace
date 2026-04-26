@@ -16,6 +16,16 @@ The app can run in two ways:
 
 ![Mentoring Workspace web interface](docs/assets/webpage-screenshot.png)
 
+### New Feature Screenshots
+
+Figure uploads add an optional image and caption to each daily entry. The image is appended to the Google Doc, while the Sheet keeps the figure filename and description.
+
+![Figure upload and caption field](docs/assets/figure-upload-screenshot.png)
+
+The calendar view shows daily entries and task dates together. Matching task markers make do dates and deadlines easier to connect.
+
+![Calendar view with entries and task dates](docs/assets/calendar-view-screenshot.png)
+
 ## How It Works
 
 ![Mentoring Workspace sync flow](docs/assets/webpage-flow.svg)
