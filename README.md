@@ -1,6 +1,6 @@
 # Mentoring Workspace
 
-A minimal collaborative tracker for mentors and mentees. It keeps daily entries, optional figures, shared tasks, assignees, do dates, deadlines, task statuses, and date-based timeline/calendar views in one simple interface.
+A minimal collaborative tracker for mentors and mentees. It keeps daily entries, optional figures, lightweight bullets/tables, shared tasks, assignees, do dates, deadlines, task statuses, and date-based timeline/calendar views in one simple interface.
 
 The app can run in two ways:
 
@@ -18,7 +18,7 @@ The app can run in two ways:
 
 ### New Feature Screenshots
 
-Figure uploads add an optional image and caption to each daily entry. The image is appended to the Google Doc, while the Sheet keeps the figure filename and description.
+Figure uploads add optional images and a shared caption to each daily entry. Images are appended to the Google Doc, while the Sheet keeps the figure filenames and description.
 
 ![Figure upload and caption field](docs/assets/figure-upload-screenshot.png)
 
@@ -47,11 +47,12 @@ With the recommended deployment setting, `Anyone with Google account`, any signe
 ## What It Does
 
 - Write daily progress entries.
-- Attach an optional PNG, JPG, or GIF figure to a daily entry.
+- Attach optional PNG, JPG, or GIF figures to a daily entry.
+- Insert bullet-list and table templates into daily response boxes.
 - Track tasks with assignees, statuses, do dates, and deadlines.
 - View tasks and daily entries together by date as a list or calendar.
 - Filter the timeline by text, type, person, status, and date.
-- Sync daily entries and attached figures to a Google Doc.
+- Sync daily entries, attached figures, bullet lists, and tables to a Google Doc.
 - Sync tasks, daily entry text, and figure metadata to a Google Sheet.
 
 ## Quick Start For Users
@@ -113,7 +114,7 @@ For real collaboration, use the Google Apps Script web app URL.
 - Do not commit private Google Doc IDs, Google Sheet IDs, API keys, tokens, or credentials.
 - The default `Code.gs` file leaves `DOCUMENT_ID` and `SPREADSHEET_ID` blank.
 - The Google Doc and Google Sheet are created in the deploying user's Drive.
-- Uploaded figures are appended to the Google Doc; the Sheet stores only the figure filename and description.
+- Uploaded figures are appended to the Google Doc; the Sheet stores only figure filenames and descriptions.
 - Collaborators use the web app; they do not need access to this source repository unless they want to modify the code.
 
 ## Project Files

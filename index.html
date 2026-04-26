@@ -33,46 +33,70 @@
               </label>
             </div>
 
-            <label class="field-row">
-              <span>
+            <div class="field-row response-field">
+              <label class="field-copy" for="workedOn">
                 <strong>Worked on</strong>
                 <small>One or two concrete items.</small>
-              </span>
-              <textarea id="workedOn" name="workedOn" rows="4" placeholder="Summarize the work completed today..."></textarea>
-            </label>
+              </label>
+              <div class="response-control">
+                <div class="format-toolbar" aria-label="Worked on formatting tools">
+                  <button class="tool-button" type="button" data-format-action="bullets" data-format-target="workedOn">Bullets</button>
+                  <button class="tool-button" type="button" data-format-action="table" data-format-target="workedOn">Table</button>
+                </div>
+                <textarea id="workedOn" name="workedOn" rows="4" placeholder="Summarize the work completed today..."></textarea>
+              </div>
+            </div>
 
-            <label class="field-row">
-              <span>
+            <div class="field-row response-field">
+              <label class="field-copy" for="notes">
                 <strong>Notes</strong>
                 <small>Results, decisions, links, questions.</small>
-              </span>
-              <textarea id="notes" name="notes" rows="4" placeholder="Important observations or context..."></textarea>
-            </label>
+              </label>
+              <div class="response-control">
+                <div class="format-toolbar" aria-label="Notes formatting tools">
+                  <button class="tool-button" type="button" data-format-action="bullets" data-format-target="notes">Bullets</button>
+                  <button class="tool-button" type="button" data-format-action="table" data-format-target="notes">Table</button>
+                </div>
+                <textarea id="notes" name="notes" rows="4" placeholder="Important observations or context..."></textarea>
+              </div>
+            </div>
 
-            <label class="field-row">
-              <span>
+            <div class="field-row response-field">
+              <label class="field-copy" for="blockers">
                 <strong>Blockers</strong>
                 <small>Anything slowing progress.</small>
-              </span>
-              <textarea id="blockers" name="blockers" rows="3" placeholder="Access, data, code, conceptual blockers..."></textarea>
-            </label>
+              </label>
+              <div class="response-control">
+                <div class="format-toolbar" aria-label="Blockers formatting tools">
+                  <button class="tool-button" type="button" data-format-action="bullets" data-format-target="blockers">Bullets</button>
+                  <button class="tool-button" type="button" data-format-action="table" data-format-target="blockers">Table</button>
+                </div>
+                <textarea id="blockers" name="blockers" rows="3" placeholder="Access, data, code, conceptual blockers..."></textarea>
+              </div>
+            </div>
 
-            <label class="field-row">
-              <span>
+            <div class="field-row response-field">
+              <label class="field-copy" for="nextStep">
                 <strong>Next step</strong>
                 <small>The next useful action.</small>
-              </span>
-              <textarea id="nextStep" name="nextStep" rows="3" placeholder="What should happen next?"></textarea>
-            </label>
+              </label>
+              <div class="response-control">
+                <div class="format-toolbar" aria-label="Next step formatting tools">
+                  <button class="tool-button" type="button" data-format-action="bullets" data-format-target="nextStep">Bullets</button>
+                  <button class="tool-button" type="button" data-format-action="table" data-format-target="nextStep">Table</button>
+                </div>
+                <textarea id="nextStep" name="nextStep" rows="3" placeholder="What should happen next?"></textarea>
+              </div>
+            </div>
 
             <label class="field-row figure-field">
               <span>
-                <strong>Figure</strong>
-                <small>Optional image and caption for the Google Doc.</small>
+                <strong>Figures</strong>
+                <small>Optional images and one shared caption for the Google Doc.</small>
               </span>
               <span class="figure-control">
-                <input id="figureInput" name="figure" type="file" accept="image/png,image/jpeg,image/gif">
-                <textarea id="figureDescription" name="figureDescription" rows="2" placeholder="Optional figure description..."></textarea>
+                <input id="figureInput" name="figure" type="file" accept="image/png,image/jpeg,image/gif" multiple>
+                <textarea id="figureDescription" name="figureDescription" rows="2" placeholder="Optional figure caption..."></textarea>
               </span>
             </label>
 
@@ -263,6 +287,32 @@
         <div class="modal-actions">
           <button class="secondary-button" id="cancelTaskButton" type="button">Cancel</button>
           <button class="primary-button" type="submit">Save task</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="modal compact-modal" id="tableDialog">
+      <form id="tableForm">
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow">Formatting</p>
+            <h2 id="tableDialogTitle">Insert table</h2>
+          </div>
+          <button class="icon-close" id="closeTableDialogButton" type="button" aria-label="Close">x</button>
+        </div>
+        <div class="modal-grid">
+          <label class="stacked-field">
+            Rows
+            <input id="tableRowsInput" type="number" min="1" max="12" value="3" required>
+          </label>
+          <label class="stacked-field">
+            Columns
+            <input id="tableColumnsInput" type="number" min="1" max="8" value="3" required>
+          </label>
+        </div>
+        <div class="modal-actions">
+          <button class="secondary-button" id="cancelTableButton" type="button">Cancel</button>
+          <button class="primary-button" type="submit">Insert table</button>
         </div>
       </form>
     </dialog>

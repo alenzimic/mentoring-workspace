@@ -69,6 +69,10 @@
   }
 
   function normalizeLog(log) {
+    const figures = normalizeFigures(log);
+    const firstFigure = figures[0] || {};
+    const figureDescription = String(log.figureDescription || firstFigure.description || "").trim();
+
     return {
       id: log.id || Utils.createId("log"),
       date: Utils.isDateInput(log.date) ? log.date : Utils.todayInput(),
@@ -77,9 +81,31 @@
       blockers: String(log.blockers || "").trim(),
       nextStep: String(log.nextStep || "").trim(),
       createdAt: log.createdAt || new Date().toISOString(),
-      figureName: String(log.figureName || "").trim(),
-      figureDescription: String(log.figureDescription || "").trim(),
+      figureName: String(log.figureName || firstFigure.name || "").trim(),
+      figureDescription,
+      figureNames: String(log.figureNames || figures.map((figure) => figure.name).filter(Boolean).join("\n")).trim(),
+      figureDescriptions: String(log.figureDescriptions || figureDescription).trim(),
+      figures,
     };
+  }
+
+  function normalizeFigures(log) {
+    const source = Array.isArray(log.figures) && log.figures.length
+      ? log.figures
+      : log.figureName || log.figureDescription
+        ? [{
+            name: log.figureName,
+            description: log.figureDescription,
+          }]
+        : [];
+
+    return source
+      .map((figure) => ({
+        name: String(figure.name || figure.figureName || "").trim(),
+        description: String(figure.description || figure.figureDescription || "").trim(),
+        mimeType: String(figure.mimeType || figure.figureMimeType || "").trim(),
+      }))
+      .filter((figure) => figure.name || figure.description);
   }
 
   function createDefaultData() {
@@ -138,6 +164,7 @@
     createDefaultData,
     getPeople,
     normalizeData,
+    normalizeFigures,
     normalizeLog,
     normalizeTask,
   };

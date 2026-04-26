@@ -200,6 +200,10 @@
   }
 
   function normalizeLog(log) {
+    const figures = normalizeFigures(log);
+    const firstFigure = figures[0] || {};
+    const figureDescription = String(log.figureDescription || firstFigure.description || "").trim();
+
     return {
       id: log.id || Utils.createId("log"),
       date: Utils.isDateInput(log.date) ? log.date : Utils.todayInput(),
@@ -208,9 +212,31 @@
       blockers: String(log.blockers || "").trim(),
       nextStep: String(log.nextStep || "").trim(),
       createdAt: log.createdAt || new Date().toISOString(),
-      figureName: String(log.figureName || "").trim(),
-      figureDescription: String(log.figureDescription || "").trim(),
+      figureName: String(log.figureName || firstFigure.name || "").trim(),
+      figureDescription,
+      figureNames: String(log.figureNames || figures.map((figure) => figure.name).filter(Boolean).join("\n")).trim(),
+      figureDescriptions: String(log.figureDescriptions || figureDescription).trim(),
+      figures,
     };
+  }
+
+  function normalizeFigures(log) {
+    const source = Array.isArray(log.figures) && log.figures.length
+      ? log.figures
+      : log.figureName || log.figureDescription
+        ? [{
+            name: log.figureName,
+            description: log.figureDescription,
+          }]
+        : [];
+
+    return source
+      .map((figure) => ({
+        name: String(figure.name || figure.figureName || "").trim(),
+        description: String(figure.description || figure.figureDescription || "").trim(),
+        mimeType: String(figure.mimeType || figure.figureMimeType || "").trim(),
+      }))
+      .filter((figure) => figure.name || figure.description);
   }
 
   function createDefaultData() {
@@ -269,6 +295,7 @@
     createDefaultData,
     getPeople,
     normalizeData,
+    normalizeFigures,
     normalizeLog,
     normalizeTask,
   };
@@ -368,6 +395,9 @@
   const App = window.MentoringWorkspace = window.MentoringWorkspace || {};
   const { Config, Data, Providers, Utils } = App;
   const MAX_FIGURE_BYTES = 5 * 1024 * 1024;
+  const MAX_FIGURE_FILES = 6;
+  const MAX_TOTAL_FIGURE_BYTES = 12 * 1024 * 1024;
+  const ALLOWED_FIGURE_TYPES = new Set(["image/png", "image/jpeg", "image/gif"]);
   const TASK_TONES = ["terra", "sage", "ochre", "clay", "moss", "stone"];
 
   const state = {
@@ -382,6 +412,7 @@
       view: "list",
     },
     editingTaskId: "",
+    formatTargetId: "",
     provider: null,
     busy: false,
   };
@@ -404,6 +435,7 @@
       logDate: document.querySelector("#logDate"),
       submitLogButton: document.querySelector("#submitLogButton"),
       clearLogButton: document.querySelector("#clearLogButton"),
+      formatButtons: Array.from(document.querySelectorAll("[data-format-action]")),
       figureInput: document.querySelector("#figureInput"),
       figureDescription: document.querySelector("#figureDescription"),
       newTaskTitle: document.querySelector("#newTaskTitle"),
@@ -440,6 +472,13 @@
       taskDeadlineInput: document.querySelector("#taskDeadlineInput"),
       closeTaskDialogButton: document.querySelector("#closeTaskDialogButton"),
       cancelTaskButton: document.querySelector("#cancelTaskButton"),
+      tableDialog: document.querySelector("#tableDialog"),
+      tableForm: document.querySelector("#tableForm"),
+      tableDialogTitle: document.querySelector("#tableDialogTitle"),
+      tableRowsInput: document.querySelector("#tableRowsInput"),
+      tableColumnsInput: document.querySelector("#tableColumnsInput"),
+      closeTableDialogButton: document.querySelector("#closeTableDialogButton"),
+      cancelTableButton: document.querySelector("#cancelTableButton"),
       settingsDialog: document.querySelector("#settingsDialog"),
       settingsMode: document.querySelector("#settingsMode"),
       settingsLastSync: document.querySelector("#settingsLastSync"),
@@ -453,6 +492,9 @@
   function bindEvents() {
     els.dailyLogForm.addEventListener("submit", submitDailyLog);
     els.clearLogButton.addEventListener("click", clearDailyForm);
+    els.formatButtons.forEach((button) => {
+      button.addEventListener("click", () => handleFormatAction(button));
+    });
     els.addTaskButton.addEventListener("click", addTask);
     els.newTaskTitle.addEventListener("keydown", (event) => {
       if (event.key === "Enter") {
@@ -487,6 +529,9 @@
     els.taskForm.addEventListener("submit", saveTaskFromDialog);
     els.closeTaskDialogButton.addEventListener("click", closeTaskDialog);
     els.cancelTaskButton.addEventListener("click", closeTaskDialog);
+    els.tableForm.addEventListener("submit", insertTableFromDialog);
+    els.closeTableDialogButton.addEventListener("click", closeTableDialog);
+    els.cancelTableButton.addEventListener("click", closeTableDialog);
   }
 
   async function loadState(successMessage = "") {
@@ -731,9 +776,8 @@
   function buildTimelineItems() {
     const items = [];
     state.data.dailyLogs.forEach((log) => {
-      const figureText = log.figureName || log.figureDescription
-        ? `Figure: ${log.figureDescription || log.figureName}`
-        : "";
+      const figures = Data.normalizeFigures(log);
+      const figureText = figureSummary(log, figures);
       const sections = [log.workedOn, log.notes, log.blockers, log.nextStep, figureText].filter(Boolean).join(" ");
       items.push({
         id: log.id,
@@ -744,7 +788,8 @@
         text: sections || "Entry saved.",
         person: "",
         status: "entry",
-        hasFigure: Boolean(log.figureName || log.figureDescription),
+        figureCount: figures.length,
+        hasFigure: Boolean(figures.length || log.figureName || log.figureDescription),
       });
     });
 
@@ -774,6 +819,13 @@
     });
 
     return items;
+  }
+
+  function figureSummary(log, figures) {
+    const count = figures.length;
+    if (!count && !log.figureName && !log.figureDescription) return "";
+    const label = count > 1 ? `${count} figures` : "Figure";
+    return `${label}: ${log.figureDescription || figures.map((figure) => figure.name).filter(Boolean).join(", ") || log.figureName}`;
   }
 
   function matchesDateFilter(item) {
@@ -898,7 +950,9 @@
       event.title = `${item.identityLabel} ${item.label}: ${item.title} / ${item.text}`;
       event.addEventListener("click", () => openTaskDialog(item.task.id));
     } else {
-      event.textContent = item.hasFigure ? "Entry + figure" : "Daily entry";
+      event.textContent = item.hasFigure
+        ? `Entry + ${item.figureCount > 1 ? `${item.figureCount} figures` : "figure"}`
+        : "Daily entry";
       event.title = item.text;
     }
     return event;
@@ -975,15 +1029,96 @@
     els.settingsLastSync.textContent = Utils.formatDateTime(state.data.sync?.lastSync);
   }
 
+  function handleFormatAction(button) {
+    const targetId = button.dataset.formatTarget;
+    const action = button.dataset.formatAction;
+    const target = document.getElementById(targetId);
+    if (!target) return;
+
+    if (action === "bullets") {
+      insertIntoTextarea(target, "- Item 1\n- Item 2");
+      return;
+    }
+
+    if (action === "table") openTableDialog(targetId);
+  }
+
+  function openTableDialog(targetId) {
+    state.formatTargetId = targetId;
+    els.tableRowsInput.value = "3";
+    els.tableColumnsInput.value = "3";
+    els.tableDialogTitle.textContent = `Insert table in ${formatTargetLabel(targetId)}`;
+    els.tableDialog.showModal();
+    els.tableRowsInput.focus();
+  }
+
+  function closeTableDialog() {
+    state.formatTargetId = "";
+    els.tableDialog.close();
+  }
+
+  function insertTableFromDialog(event) {
+    event.preventDefault();
+    const target = document.getElementById(state.formatTargetId);
+    if (!target) {
+      closeTableDialog();
+      return;
+    }
+
+    const rows = clampNumber(els.tableRowsInput.value, 1, 12, 3);
+    const columns = clampNumber(els.tableColumnsInput.value, 1, 8, 3);
+    insertIntoTextarea(target, buildMarkdownTable(rows, columns));
+    closeTableDialog();
+  }
+
+  function formatTargetLabel(targetId) {
+    return {
+      workedOn: "Worked on",
+      notes: "Notes",
+      blockers: "Blockers",
+      nextStep: "Next step",
+    }[targetId] || "entry";
+  }
+
+  function clampNumber(value, min, max, fallback) {
+    const number = Number.parseInt(value, 10);
+    if (!Number.isFinite(number)) return fallback;
+    return Math.min(max, Math.max(min, number));
+  }
+
+  function buildMarkdownTable(rows, columns) {
+    const header = Array.from({ length: columns }, (_, index) => `Header ${index + 1}`);
+    const divider = Array.from({ length: columns }, () => "---");
+    const bodyRows = Array.from({ length: Math.max(0, rows - 1) }, () => Array.from({ length: columns }, () => ""));
+    return [header, divider, ...bodyRows]
+      .map((cells) => `| ${cells.join(" | ")} |`)
+      .join("\n");
+  }
+
+  function insertIntoTextarea(textarea, snippet) {
+    const start = textarea.selectionStart ?? textarea.value.length;
+    const end = textarea.selectionEnd ?? start;
+    const before = textarea.value.slice(0, start);
+    const after = textarea.value.slice(end);
+    const prefix = before && !before.endsWith("\n") ? "\n\n" : "";
+    const suffix = after && !after.startsWith("\n") ? "\n\n" : "";
+    const inserted = `${prefix}${snippet}${suffix}`;
+
+    textarea.value = `${before}${inserted}${after}`;
+    const cursor = before.length + inserted.length;
+    textarea.focus();
+    textarea.setSelectionRange(cursor, cursor);
+  }
+
   async function submitDailyLog(event) {
     event.preventDefault();
     const formData = Object.fromEntries(new FormData(els.dailyLogForm).entries());
-    const figureFile = els.figureInput.files[0];
+    const figureFiles = Array.from(els.figureInput.files || []);
     const figureDescription = String(formData.figureDescription || "").trim();
     const hasContent = ["workedOn", "notes", "blockers", "nextStep"].some((key) => formData[key]?.trim())
-      || Boolean(figureFile);
-    if (figureDescription && !figureFile) {
-      showToast("Attach a figure before adding a figure description");
+      || Boolean(figureFiles.length);
+    if (figureDescription && !figureFiles.length) {
+      showToast("Attach at least one figure before adding a caption");
       return;
     }
     if (!hasContent) {
@@ -993,7 +1128,7 @@
 
     let figurePayload;
     try {
-      figurePayload = await buildFigurePayload(figureFile, figureDescription);
+      figurePayload = await buildFigurePayload(figureFiles, figureDescription);
     } catch (error) {
       showToast(error.message);
       return;
@@ -1018,26 +1153,48 @@
     });
   }
 
-  function buildFigurePayload(file, description) {
-    if (!file) {
+  function buildFigurePayload(files, description) {
+    const selectedFiles = Array.from(files || []);
+    if (!selectedFiles.length) {
       return Promise.resolve({
         figureName: "",
         figureMimeType: "",
         figureDescription: "",
         figureDataUrl: "",
+        figureNames: "",
+        figureDescriptions: "",
+        figures: [],
       });
     }
-    if (!file.type || !file.type.startsWith("image/")) {
-      return Promise.reject(new Error("Choose an image file for the figure"));
+    if (selectedFiles.length > MAX_FIGURE_FILES) {
+      return Promise.reject(new Error(`Attach ${MAX_FIGURE_FILES} figures or fewer`));
     }
-    if (file.size > MAX_FIGURE_BYTES) {
-      return Promise.reject(new Error("Choose a figure under 5 MB"));
+    const totalBytes = selectedFiles.reduce((sum, file) => sum + file.size, 0);
+    if (totalBytes > MAX_TOTAL_FIGURE_BYTES) {
+      return Promise.reject(new Error("Keep all figures under 12 MB total"));
     }
-    return readFileAsDataUrl(file).then((figureDataUrl) => ({
-      figureName: file.name,
-      figureMimeType: file.type,
+    const invalidType = selectedFiles.find((file) => !ALLOWED_FIGURE_TYPES.has(file.type));
+    if (invalidType) {
+      return Promise.reject(new Error("Choose PNG, JPG, or GIF figures"));
+    }
+    const oversized = selectedFiles.find((file) => file.size > MAX_FIGURE_BYTES);
+    if (oversized) {
+      return Promise.reject(new Error("Choose figures under 5 MB each"));
+    }
+
+    return Promise.all(selectedFiles.map((file) => readFileAsDataUrl(file).then((dataUrl) => ({
+      name: file.name,
+      mimeType: file.type,
+      description: "",
+      dataUrl,
+    })))).then((figures) => ({
+      figureName: figures[0]?.name || "",
+      figureMimeType: figures[0]?.mimeType || "",
       figureDescription: description,
-      figureDataUrl,
+      figureDataUrl: figures[0]?.dataUrl || "",
+      figureNames: figures.map((figure) => figure.name).join("\n"),
+      figureDescriptions: description,
+      figures,
     }));
   }
 

@@ -17,10 +17,12 @@ const CONFIG = {
 };
 
 const TASK_HEADERS = ["id", "title", "status", "assignee", "updatedAt", "doDate", "deadline"];
-const LOG_HEADERS = ["id", "date", "workedOn", "notes", "blockers", "nextStep", "createdAt", "figureName", "figureDescription"];
+const LOG_HEADERS = ["id", "date", "workedOn", "notes", "blockers", "nextStep", "createdAt", "figureName", "figureDescription", "figureNames", "figureDescriptions"];
 const STATUS_VALUES = ["not_started", "in_progress", "waiting", "blocked", "done"];
 const STATUS_ALIASES = { open: "in_progress" };
 const MAX_FIGURE_BYTES = 5 * 1024 * 1024;
+const MAX_FIGURE_FILES = 6;
+const MAX_TOTAL_FIGURE_BYTES = 12 * 1024 * 1024;
 
 function doGet() {
   return HtmlService.createHtmlOutputFromFile("Index")
@@ -112,6 +114,9 @@ function readState_() {
       createdAt: log.createdAt,
       figureName: log.figureName,
       figureDescription: log.figureDescription,
+      figureNames: log.figureNames,
+      figureDescriptions: log.figureDescriptions,
+      figures: parseFigureMetadata_(log),
     })),
     sync: {
       mode: "google",
@@ -213,13 +218,13 @@ function formatLogSheet_(sheet) {
   ensureHeaders_(sheet, LOG_HEADERS);
   sheet.getRange("A:A").setNumberFormat("@");
   sheet.getRange("B:B").setNumberFormat("yyyy-mm-dd");
-  sheet.getRange("C:I").setWrap(true);
+  sheet.getRange("C:K").setWrap(true);
   sheet.setColumnWidths(1, 1, 190);
   sheet.setColumnWidths(2, 1, 110);
   sheet.setColumnWidths(3, 4, 260);
   sheet.setColumnWidths(7, 1, 210);
   sheet.setColumnWidths(8, 1, 180);
-  sheet.setColumnWidths(9, 1, 280);
+  sheet.setColumnWidths(9, 3, 280);
 }
 
 function withProjectLock_(callback) {
@@ -275,7 +280,7 @@ function appendLogToDocument_(log) {
   appendSection_(body, "Notes", log.notes);
   appendSection_(body, "Blockers", log.blockers);
   appendSection_(body, "Next step", log.nextStep);
-  appendFigure_(body, log);
+  appendFigures_(body, log);
   body.appendParagraph("");
   document.saveAndClose();
 }
@@ -283,23 +288,106 @@ function appendLogToDocument_(log) {
 function appendSection_(body, label, value) {
   if (!value) return;
   body.appendParagraph(label).setHeading(DocumentApp.ParagraphHeading.HEADING3);
-  body.appendParagraph(String(value));
+  appendFormattedText_(body, value);
 }
 
-function appendFigure_(body, log) {
-  const blob = figureBlobFromDataUrl_(log.figureDataUrl, log.figureMimeType, log.figureName);
-  if (!blob) return;
+function appendFormattedText_(body, value) {
+  const lines = String(value || "").replace(/\r\n/g, "\n").split("\n");
 
-  body.appendParagraph("Figure").setHeading(DocumentApp.ParagraphHeading.HEADING3);
-  const image = body.appendImage(blob);
-  const width = image.getWidth();
-  const height = image.getHeight();
-  const maxWidth = 520;
-  if (width > maxWidth) {
-    image.setWidth(maxWidth);
-    image.setHeight(Math.round((height / width) * maxWidth));
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index];
+    if (!line.trim()) continue;
+
+    const table = readMarkdownTable_(lines, index);
+    if (table) {
+      appendMarkdownTable_(body, table.rows);
+      index = table.nextIndex - 1;
+      continue;
+    }
+
+    const bullet = line.match(/^\s*(?:[-*]|\d+[.)])\s+(.+)$/);
+    if (bullet) {
+      body.appendListItem(bullet[1]).setGlyphType(DocumentApp.GlyphType.BULLET);
+      continue;
+    }
+
+    body.appendParagraph(line);
   }
-  if (log.figureDescription) body.appendParagraph(String(log.figureDescription)).editAsText().setItalic(true);
+}
+
+function readMarkdownTable_(lines, startIndex) {
+  if (!isMarkdownTableRow_(lines[startIndex]) || !isMarkdownTableSeparator_(lines[startIndex + 1])) return null;
+
+  const tableLines = [lines[startIndex]];
+  let index = startIndex + 2;
+  while (index < lines.length && isMarkdownTableRow_(lines[index])) {
+    tableLines.push(lines[index]);
+    index += 1;
+  }
+
+  const rows = tableLines.map(parseMarkdownTableRow_).filter((row) => row.length);
+  const width = rows.reduce((max, row) => Math.max(max, row.length), 0);
+  return {
+    rows: rows.map((row) => row.concat(Array(Math.max(0, width - row.length)).fill(" "))),
+    nextIndex: index,
+  };
+}
+
+function isMarkdownTableRow_(line) {
+  const value = String(line || "").trim();
+  return value.startsWith("|") && value.endsWith("|") && value.slice(1, -1).includes("|");
+}
+
+function isMarkdownTableSeparator_(line) {
+  if (!isMarkdownTableRow_(line)) return false;
+  return parseMarkdownTableRow_(line).every((cell) => /^:?-{3,}:?$/.test(cell));
+}
+
+function parseMarkdownTableRow_(line) {
+  return String(line || "")
+    .trim()
+    .replace(/^\|/, "")
+    .replace(/\|$/, "")
+    .split("|")
+    .map((cell) => String(cell || "").trim() || " ");
+}
+
+function appendMarkdownTable_(body, rows) {
+  if (!rows.length) return;
+  const table = body.appendTable(rows);
+  try {
+    for (let column = 0; column < table.getRow(0).getNumCells(); column += 1) {
+      table.getRow(0).getCell(column).editAsText().setBold(true);
+    }
+  } catch (error) {
+    Logger.log(`Could not style table header: ${error.message}`);
+  }
+}
+
+function appendFigures_(body, log) {
+  const figures = log.figures || [];
+  if (!figures.length) return;
+
+  body.appendParagraph(figures.length === 1 ? "Figure" : "Figures").setHeading(DocumentApp.ParagraphHeading.HEADING3);
+  figures.forEach((figure, index) => {
+    const blob = figureBlobFromDataUrl_(figure.dataUrl, figure.mimeType, figure.name);
+    if (!blob) return;
+
+    if (figures.length > 1) body.appendParagraph(`Figure ${index + 1}${figure.name ? `: ${figure.name}` : ""}`);
+    const image = body.appendImage(blob);
+    const width = image.getWidth();
+    const height = image.getHeight();
+    const maxWidth = 520;
+    if (width > maxWidth) {
+      image.setWidth(maxWidth);
+      image.setHeight(Math.round((height / width) * maxWidth));
+    }
+    if (figure.description) body.appendParagraph(String(figure.description)).editAsText().setItalic(true);
+  });
+
+  if (log.figureDescription && !figures.some((figure) => figure.description === log.figureDescription)) {
+    body.appendParagraph(String(log.figureDescription)).editAsText().setItalic(true);
+  }
 }
 
 function figureBlobFromDataUrl_(dataUrl, fallbackMimeType, fallbackName) {
@@ -337,6 +425,10 @@ function normalizeTask_(task) {
 }
 
 function normalizeLog_(log) {
+  const figures = normalizeFigures_(log);
+  const firstFigure = figures[0] || {};
+  const figureDescription = String(log.figureDescription || firstFigure.description || "").trim();
+
   return {
     id: log.id || createId_("log"),
     date: log.date || toDateInput_(new Date()),
@@ -345,11 +437,57 @@ function normalizeLog_(log) {
     blockers: String(log.blockers || "").trim(),
     nextStep: String(log.nextStep || "").trim(),
     createdAt: log.createdAt || new Date().toISOString(),
-    figureName: String(log.figureName || "").trim(),
-    figureDescription: String(log.figureDescription || "").trim(),
-    figureMimeType: String(log.figureMimeType || "").trim(),
-    figureDataUrl: String(log.figureDataUrl || "").trim(),
+    figureName: String(log.figureName || firstFigure.name || "").trim(),
+    figureDescription,
+    figureMimeType: String(log.figureMimeType || firstFigure.mimeType || "").trim(),
+    figureDataUrl: String(log.figureDataUrl || firstFigure.dataUrl || "").trim(),
+    figureNames: figures.map((figure) => figure.name).filter(Boolean).join("\n"),
+    figureDescriptions: figures.map((figure) => figure.description).filter(Boolean).join("\n") || figureDescription,
+    figures,
   };
+}
+
+function normalizeFigures_(log) {
+  const rawFigures = Array.isArray(log.figures) && log.figures.length
+    ? log.figures
+    : log.figureDataUrl || log.figureName
+      ? [{
+          name: log.figureName,
+          description: log.figureDescription,
+          mimeType: log.figureMimeType,
+          dataUrl: log.figureDataUrl,
+        }]
+      : [];
+
+  if (rawFigures.length > MAX_FIGURE_FILES) throw new Error(`Attach ${MAX_FIGURE_FILES} figures or fewer.`);
+
+  let totalBytes = 0;
+  const figures = rawFigures.map((figure) => {
+    const normalized = {
+      name: String(figure.name || figure.figureName || "").trim(),
+      description: String(figure.description || figure.figureDescription || "").trim(),
+      mimeType: String(figure.mimeType || figure.figureMimeType || "").trim(),
+      dataUrl: String(figure.dataUrl || figure.figureDataUrl || "").trim(),
+    };
+    if (normalized.dataUrl) {
+      const match = normalized.dataUrl.match(/^data:[^;]+;base64,([\s\S]+)$/);
+      if (match) totalBytes += Utilities.base64Decode(match[1]).length;
+    }
+    return normalized;
+  }).filter((figure) => figure.name || figure.description || figure.dataUrl);
+
+  if (totalBytes > MAX_TOTAL_FIGURE_BYTES) throw new Error("Keep all figures under 12 MB total.");
+  return figures;
+}
+
+function parseFigureMetadata_(log) {
+  const names = String(log.figureNames || log.figureName || "").split(/\n|;/).map((value) => value.trim()).filter(Boolean);
+  const descriptions = String(log.figureDescriptions || log.figureDescription || "").split(/\n\n|\n/).map((value) => value.trim()).filter(Boolean);
+  return names.map((name, index) => ({
+    name,
+    description: descriptions[index] || descriptions[0] || "",
+    mimeType: "",
+  }));
 }
 
 function buildDefaultTasks_() {

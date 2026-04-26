@@ -220,6 +220,10 @@ h2 {
   align-items: start;
 }
 
+.field-copy {
+  color: var(--text);
+}
+
 .field-row strong {
   display: block;
   margin-bottom: 3px;
@@ -228,6 +232,36 @@ h2 {
 .field-row small {
   display: block;
   color: var(--muted);
+}
+
+.response-control {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.format-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+  min-width: 0;
+}
+
+.tool-button {
+  min-height: 30px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fffdf8;
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: 850;
+  padding: 0 10px;
+}
+
+.tool-button:hover {
+  border-color: var(--line-strong);
+  color: var(--red-dark);
 }
 
 .figure-control {
@@ -989,6 +1023,10 @@ button.calendar-event:hover {
   padding: 0;
 }
 
+.compact-modal {
+  width: min(420px, calc(100vw - 28px));
+}
+
 .modal::backdrop {
   background: rgba(40, 38, 31, 0.34);
 }
@@ -1170,6 +1208,10 @@ button.calendar-event:hover {
   .modal-actions {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .format-toolbar {
+    justify-content: flex-start;
   }
 
   .form-actions button,
