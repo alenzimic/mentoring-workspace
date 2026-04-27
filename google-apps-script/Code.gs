@@ -275,23 +275,109 @@ function deleteRowById_(sheet, id) {
 function appendLogToDocument_(log) {
   const document = getDocument_();
   const body = document.getBody();
-  body.appendParagraph(formatDisplayDate_(log.date)).setHeading(DocumentApp.ParagraphHeading.HEADING2);
-  appendSection_(body, "Worked on", log.workedOn);
-  appendSection_(body, "Notes", log.notes);
-  appendSection_(body, "Blockers", log.blockers);
-  appendSection_(body, "Next step", log.nextStep);
-  appendFigures_(body, log);
-  body.appendParagraph("");
+  const insertIndex = getDailyLogInsertIndex_(body, formatDisplayDate_(log.date));
+  const writer = createBodyWriter_(body, insertIndex);
+  appendSection_(writer, "Worked on", log.workedOn);
+  appendSection_(writer, "Notes", log.notes);
+  appendSection_(writer, "Blockers", log.blockers);
+  appendSection_(writer, "Next step", log.nextStep);
+  appendFigures_(writer, log);
+  writer.appendParagraph("");
   document.saveAndClose();
 }
 
-function appendSection_(body, label, value) {
-  if (!value) return;
-  body.appendParagraph(label).setHeading(DocumentApp.ParagraphHeading.HEADING3);
-  appendFormattedText_(body, value);
+function getDailyLogInsertIndex_(body, dateTitle) {
+  const existingHeadingIndex = findDateHeadingIndex_(body, dateTitle);
+  if (existingHeadingIndex >= 0) return findDateSectionEndIndex_(body, existingHeadingIndex);
+
+  body.appendParagraph(dateTitle).setHeading(DocumentApp.ParagraphHeading.HEADING2);
+  return body.getNumChildren();
 }
 
-function appendFormattedText_(body, value) {
+function findDateHeadingIndex_(body, dateTitle) {
+  const target = normalizeHeadingText_(dateTitle);
+  for (let index = 0; index < body.getNumChildren(); index += 1) {
+    const child = body.getChild(index);
+    if (isHeading2_(child) && normalizeHeadingText_(child.asParagraph().getText()) === target) {
+      return index;
+    }
+  }
+  return -1;
+}
+
+function findDateSectionEndIndex_(body, headingIndex) {
+  for (let index = headingIndex + 1; index < body.getNumChildren(); index += 1) {
+    if (isHeading2_(body.getChild(index))) return index;
+  }
+  return body.getNumChildren();
+}
+
+function isHeading2_(element) {
+  return element.getType() === DocumentApp.ElementType.PARAGRAPH
+    && element.asParagraph().getHeading() === DocumentApp.ParagraphHeading.HEADING2;
+}
+
+function normalizeHeadingText_(value) {
+  return String(value || "").replace(/\s+/g, " ").trim();
+}
+
+function createBodyWriter_(body, insertIndex) {
+  return {
+    index: typeof insertIndex === "number" ? insertIndex : null,
+    appendParagraph(text) {
+      if (this.index === null) return body.appendParagraph(text);
+      if (this.index >= body.getNumChildren()) {
+        const paragraph = body.appendParagraph(text);
+        this.index = body.getNumChildren();
+        return paragraph;
+      }
+      const paragraph = body.insertParagraph(this.index, text);
+      this.index += 1;
+      return paragraph;
+    },
+    appendListItem(text) {
+      if (this.index === null) return body.appendListItem(text);
+      if (this.index >= body.getNumChildren()) {
+        const item = body.appendListItem(text);
+        this.index = body.getNumChildren();
+        return item;
+      }
+      const item = body.insertListItem(this.index, text);
+      this.index += 1;
+      return item;
+    },
+    appendTable(rows) {
+      if (this.index === null) return body.appendTable(rows);
+      if (this.index >= body.getNumChildren()) {
+        const table = body.appendTable(rows);
+        this.index = body.getNumChildren();
+        return table;
+      }
+      const table = body.insertTable(this.index, rows);
+      this.index += 1;
+      return table;
+    },
+    appendImage(blob) {
+      if (this.index === null) return body.appendImage(blob);
+      if (this.index >= body.getNumChildren()) {
+        const image = body.appendImage(blob);
+        this.index = body.getNumChildren();
+        return image;
+      }
+      const image = body.insertImage(this.index, blob);
+      this.index += 1;
+      return image;
+    },
+  };
+}
+
+function appendSection_(writer, label, value) {
+  if (!value) return;
+  writer.appendParagraph(label).setHeading(DocumentApp.ParagraphHeading.HEADING3);
+  appendFormattedText_(writer, value);
+}
+
+function appendFormattedText_(writer, value) {
   const lines = String(value || "").replace(/\r\n/g, "\n").split("\n");
 
   for (let index = 0; index < lines.length; index += 1) {
@@ -300,18 +386,18 @@ function appendFormattedText_(body, value) {
 
     const table = readMarkdownTable_(lines, index);
     if (table) {
-      appendMarkdownTable_(body, table.rows);
+      appendMarkdownTable_(writer, table.rows);
       index = table.nextIndex - 1;
       continue;
     }
 
     const bullet = line.match(/^\s*(?:[-*]|\d+[.)])\s+(.+)$/);
     if (bullet) {
-      body.appendListItem(bullet[1]).setGlyphType(DocumentApp.GlyphType.BULLET);
+      writer.appendListItem(bullet[1]).setGlyphType(DocumentApp.GlyphType.BULLET);
       continue;
     }
 
-    body.appendParagraph(line);
+    writer.appendParagraph(line);
   }
 }
 
@@ -352,9 +438,9 @@ function parseMarkdownTableRow_(line) {
     .map((cell) => String(cell || "").trim() || " ");
 }
 
-function appendMarkdownTable_(body, rows) {
+function appendMarkdownTable_(writer, rows) {
   if (!rows.length) return;
-  const table = body.appendTable(rows);
+  const table = writer.appendTable(rows);
   try {
     for (let column = 0; column < table.getRow(0).getNumCells(); column += 1) {
       table.getRow(0).getCell(column).editAsText().setBold(true);
@@ -364,17 +450,17 @@ function appendMarkdownTable_(body, rows) {
   }
 }
 
-function appendFigures_(body, log) {
+function appendFigures_(writer, log) {
   const figures = log.figures || [];
   if (!figures.length) return;
 
-  body.appendParagraph(figures.length === 1 ? "Figure" : "Figures").setHeading(DocumentApp.ParagraphHeading.HEADING3);
+  writer.appendParagraph(figures.length === 1 ? "Figure" : "Figures").setHeading(DocumentApp.ParagraphHeading.HEADING3);
   figures.forEach((figure, index) => {
     const blob = figureBlobFromDataUrl_(figure.dataUrl, figure.mimeType, figure.name);
     if (!blob) return;
 
-    if (figures.length > 1) body.appendParagraph(`Figure ${index + 1}${figure.name ? `: ${figure.name}` : ""}`);
-    const image = body.appendImage(blob);
+    if (figures.length > 1) writer.appendParagraph(`Figure ${index + 1}${figure.name ? `: ${figure.name}` : ""}`);
+    const image = writer.appendImage(blob);
     const width = image.getWidth();
     const height = image.getHeight();
     const maxWidth = 520;
@@ -382,11 +468,11 @@ function appendFigures_(body, log) {
       image.setWidth(maxWidth);
       image.setHeight(Math.round((height / width) * maxWidth));
     }
-    if (figure.description) body.appendParagraph(String(figure.description)).editAsText().setItalic(true);
+    if (figure.description) writer.appendParagraph(String(figure.description)).editAsText().setItalic(true);
   });
 
   if (log.figureDescription && !figures.some((figure) => figure.description === log.figureDescription)) {
-    body.appendParagraph(String(log.figureDescription)).editAsText().setItalic(true);
+    writer.appendParagraph(String(log.figureDescription)).editAsText().setItalic(true);
   }
 }
 

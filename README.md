@@ -55,6 +55,7 @@ With the recommended deployment setting, `Anyone with Google account`, any signe
 - View entries and tasks by date as a list, or use a task calendar with a daily-log activity grid.
 - Filter the timeline by text, type, person, status, and date.
 - Sync daily entries, attached figures, bullet lists, and tables to a Google Doc.
+- Group multiple same-day entries under one date heading in the Google Doc.
 - Sync tasks, daily entry text, and figure metadata to a Google Sheet.
 
 ## Quick Start For Users
