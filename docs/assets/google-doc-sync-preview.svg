@@ -1,6 +1,6 @@
 <svg width="1200" height="780" viewBox="0 0 1200 780" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
   <title id="title">Google Docs sync preview</title>
-  <desc id="desc">A placeholder screenshot-style preview of daily entries appended to a Google Doc from the mentoring workspace app.</desc>
+  <desc id="desc">A placeholder screenshot-style preview of daily entries grouped by date in a Google Doc from the mentoring workspace app.</desc>
   <rect width="1200" height="780" fill="#eef1f4"/>
   <rect x="0" y="0" width="1200" height="64" fill="#ffffff"/>
   <rect x="22" y="18" width="28" height="30" rx="4" fill="#4285f4"/>
@@ -23,14 +23,14 @@
   <text x="102" y="184" fill="#5f6368" font-family="Arial, sans-serif" font-size="14" font-weight="700">Document outline</text>
   <line x1="116" y1="214" x2="116" y2="650" stroke="#d2e3fc" stroke-width="3"/>
   <text x="138" y="226" fill="#1967d2" font-family="Arial, sans-serif" font-size="13" font-weight="700">Mentoring Workspace</text>
-  <text x="154" y="258" fill="#3c4043" font-family="Arial, sans-serif" font-size="13">April 25, 2026</text>
+  <text x="154" y="258" fill="#3c4043" font-family="Arial, sans-serif" font-size="13">April 27, 2026</text>
   <text x="170" y="290" fill="#5f6368" font-family="Arial, sans-serif" font-size="12">Worked on</text>
   <text x="170" y="322" fill="#5f6368" font-family="Arial, sans-serif" font-size="12">Notes</text>
-  <text x="170" y="354" fill="#5f6368" font-family="Arial, sans-serif" font-size="12">Next step</text>
-  <text x="154" y="398" fill="#3c4043" font-family="Arial, sans-serif" font-size="13">April 26, 2026</text>
-  <text x="170" y="430" fill="#5f6368" font-family="Arial, sans-serif" font-size="12">Worked on</text>
-  <text x="170" y="462" fill="#5f6368" font-family="Arial, sans-serif" font-size="12">Blockers</text>
-  <text x="170" y="494" fill="#5f6368" font-family="Arial, sans-serif" font-size="12">Next step</text>
+  <text x="170" y="354" fill="#5f6368" font-family="Arial, sans-serif" font-size="12">Worked on</text>
+  <text x="170" y="386" fill="#5f6368" font-family="Arial, sans-serif" font-size="12">Next step</text>
+  <text x="154" y="438" fill="#3c4043" font-family="Arial, sans-serif" font-size="13">April 28, 2026</text>
+  <text x="170" y="470" fill="#5f6368" font-family="Arial, sans-serif" font-size="12">Worked on</text>
+  <text x="170" y="502" fill="#5f6368" font-family="Arial, sans-serif" font-size="12">Notes</text>
 
   <rect x="360" y="140" width="530" height="605" fill="#ffffff" stroke="#dadce0"/>
   <text x="420" y="217" fill="#202124" font-family="Arial, sans-serif" font-size="30" font-weight="700">Mentoring Workspace</text>
@@ -38,21 +38,19 @@
   <text x="420" y="270" fill="#202124" font-family="Arial, sans-serif" font-size="14">Mentee: Mentee</text>
   <text x="420" y="291" fill="#202124" font-family="Arial, sans-serif" font-size="14">People: Mentor, Mentee</text>
 
-  <text x="420" y="348" fill="#202124" font-family="Arial, sans-serif" font-size="24" font-weight="700">April 25, 2026</text>
+  <text x="420" y="348" fill="#202124" font-family="Arial, sans-serif" font-size="24" font-weight="700">April 27, 2026</text>
   <text x="420" y="394" fill="#5f6368" font-family="Arial, sans-serif" font-size="18" font-weight="700">Worked on</text>
-  <text x="420" y="421" fill="#202124" font-family="Arial, sans-serif" font-size="15">Finished literature notes and tested the analysis script.</text>
+  <text x="420" y="421" fill="#202124" font-family="Arial, sans-serif" font-size="15">Reviewed background papers and summarized key methods.</text>
   <text x="420" y="469" fill="#5f6368" font-family="Arial, sans-serif" font-size="18" font-weight="700">Notes</text>
   <text x="420" y="496" fill="#202124" font-family="Arial, sans-serif" font-size="15">Dataset import now runs without warnings.</text>
-  <text x="420" y="544" fill="#5f6368" font-family="Arial, sans-serif" font-size="18" font-weight="700">Next step</text>
-  <text x="420" y="571" fill="#202124" font-family="Arial, sans-serif" font-size="15">Prepare summary plots for the next meeting.</text>
-
-  <text x="420" y="638" fill="#202124" font-family="Arial, sans-serif" font-size="24" font-weight="700">April 26, 2026</text>
-  <text x="420" y="684" fill="#5f6368" font-family="Arial, sans-serif" font-size="18" font-weight="700">Worked on</text>
-  <text x="420" y="711" fill="#202124" font-family="Arial, sans-serif" font-size="15">Reviewed task progress and added follow-up questions.</text>
+  <text x="420" y="544" fill="#5f6368" font-family="Arial, sans-serif" font-size="18" font-weight="700">Worked on</text>
+  <text x="420" y="571" fill="#202124" font-family="Arial, sans-serif" font-size="15">Prepared questions for the next mentoring check-in.</text>
+  <text x="420" y="619" fill="#5f6368" font-family="Arial, sans-serif" font-size="18" font-weight="700">Next step</text>
+  <text x="420" y="646" fill="#202124" font-family="Arial, sans-serif" font-size="15">Draft the research plan outline before Friday.</text>
 
   <rect x="930" y="178" width="208" height="132" rx="18" fill="#edf3e8" stroke="#c5d3bd"/>
-  <text x="958" y="220" fill="#4f684e" font-family="Arial, sans-serif" font-size="18" font-weight="800">Updated by the app</text>
-  <text x="958" y="252" fill="#4f684e" font-family="Arial, sans-serif" font-size="14">Each submitted daily</text>
-  <text x="958" y="274" fill="#4f684e" font-family="Arial, sans-serif" font-size="14">entry is appended here.</text>
+  <text x="958" y="220" fill="#4f684e" font-family="Arial, sans-serif" font-size="18" font-weight="800">Grouped by day</text>
+  <text x="958" y="252" fill="#4f684e" font-family="Arial, sans-serif" font-size="14">Multiple entries from one</text>
+  <text x="958" y="274" fill="#4f684e" font-family="Arial, sans-serif" font-size="14">day share the same title.</text>
   <text x="958" y="296" fill="#4f684e" font-family="Arial, sans-serif" font-size="12">Example data only</text>
 </svg>
