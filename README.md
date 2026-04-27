@@ -2,7 +2,7 @@
 
 Smooth communication is key in a mentor-mentee relationship, as it can greatly improve long-term efficiency. Most project management apps are built on closed software and have very limited integration capabilities. Google Suite may be one of the most versatile and useful tools for collaboration, but it lacks a true project management interface. This repository aims to take advantage of Google Suite’s strengths and combine them with a project management interface, for making mentor-mentee communication an easier and more organized task.
 
-A minimal collaborative tracker for mentors and mentees. It keeps daily entries, optional figures, lightweight bullets/tables, shared tasks, assignees, do dates, deadlines, task statuses, and date-based timeline/calendar views in one simple interface.
+A minimal collaborative tracker for mentors and mentees. It keeps daily entries, optional figures, lightweight bullets/tables, shared tasks, assignees, do dates, deadlines, task statuses, and date-based timeline views in one simple interface.
 
 The app can run in two ways:
 
@@ -24,9 +24,9 @@ Figure uploads add optional images and a shared caption to each daily entry. Ima
 
 ![Figure upload and caption field](docs/assets/figure-upload-screenshot.png)
 
-The calendar view shows daily entries and task dates together. Matching task markers make do dates and deadlines easier to connect.
+The calendar view is a task-only month carousel. Daily entries appear below it in a contribution-style activity grid so logged days and streaks are easy to scan.
 
-![Calendar view with entries and task dates](docs/assets/calendar-view-screenshot.png)
+![Task calendar carousel and daily log activity grid](docs/assets/calendar-view-screenshot.png)
 
 ## How It Works
 
@@ -52,7 +52,7 @@ With the recommended deployment setting, `Anyone with Google account`, any signe
 - Attach optional PNG, JPG, or GIF figures to a daily entry.
 - Insert bullet-list and table templates into daily response boxes.
 - Track tasks with assignees, statuses, do dates, and deadlines.
-- View tasks and daily entries together by date as a list or calendar.
+- View entries and tasks by date as a list, or use a task calendar with a daily-log activity grid.
 - Filter the timeline by text, type, person, status, and date.
 - Sync daily entries, attached figures, bullet lists, and tables to a Google Doc.
 - Sync tasks, daily entry text, and figure metadata to a Google Sheet.

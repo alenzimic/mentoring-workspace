@@ -902,6 +902,7 @@ h2 {
 }
 
 .calendar-month,
+.log-activity,
 .calendar-unscheduled {
   display: grid;
   gap: 10px;
@@ -910,16 +911,40 @@ h2 {
 }
 
 .calendar-month:first-child,
+.log-activity:first-child,
 .calendar-unscheduled:first-child {
   border-top: 0;
   padding-top: 0;
 }
 
 .calendar-month h3,
+.log-activity h3,
 .calendar-unscheduled h3 {
   margin: 0;
   color: var(--ink-soft);
   font-size: 15px;
+}
+
+.calendar-carousel-header,
+.log-activity-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.calendar-carousel-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.calendar-nav-button {
+  min-height: 32px;
+  min-width: 40px;
+  padding: 0 10px;
+  font-size: 13px;
 }
 
 .calendar-grid {
@@ -1019,6 +1044,85 @@ button.calendar-event:hover {
 
 .calendar-event.deadline {
   border-left-color: var(--red);
+}
+
+.log-activity {
+  gap: 12px;
+}
+
+.log-activity-summary {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+  text-align: right;
+}
+
+.activity-scroll {
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.activity-grid {
+  display: grid;
+  grid-template-columns: 28px repeat(var(--activity-weeks), 14px);
+  grid-template-rows: 18px repeat(7, 14px);
+  grid-auto-flow: row;
+  gap: 4px;
+  width: max-content;
+  min-width: 100%;
+  align-items: center;
+}
+
+.activity-month-label,
+.activity-day-label {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 850;
+  line-height: 1;
+}
+
+.activity-day-label {
+  text-align: right;
+}
+
+.activity-cell {
+  display: block;
+  width: 14px;
+  height: 14px;
+  border: 1px solid rgba(63, 67, 56, 0.08);
+  border-radius: 3px;
+  background: #ebe5d8;
+}
+
+.activity-cell.level-1 {
+  background: #dce9d3;
+}
+
+.activity-cell.level-2 {
+  background: #b8d49d;
+}
+
+.activity-cell.level-3 {
+  background: #7da369;
+}
+
+.activity-cell.level-4 {
+  background: #416f47;
+}
+
+.activity-cell.future {
+  opacity: 0.42;
+}
+
+.activity-legend {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
 }
 
 .modal {
@@ -1202,6 +1306,19 @@ button.calendar-event:hover {
 
   .calendar-month {
     min-width: 720px;
+  }
+
+  .calendar-carousel-header,
+  .log-activity-header {
+    display: grid;
+  }
+
+  .calendar-carousel-controls {
+    justify-content: flex-start;
+  }
+
+  .log-activity-summary {
+    text-align: left;
   }
 
   .panel-header {
@@ -1981,6 +2098,7 @@ button.calendar-event:hover {
   const MAX_FIGURE_FILES = 6;
   const MAX_TOTAL_FIGURE_BYTES = 12 * 1024 * 1024;
   const ALLOWED_FIGURE_TYPES = new Set(["image/png", "image/jpeg", "image/gif"]);
+  const LOG_ACTIVITY_WEEKS = 26;
   const TASK_TONES = ["terra", "sage", "ochre", "clay", "moss", "stone"];
 
   const state = {
@@ -1993,6 +2111,7 @@ button.calendar-event:hover {
       status: "all",
       date: "all",
       view: "list",
+      calendarMonth: "",
     },
     editingTaskId: "",
     formatTargetId: "",
@@ -2315,13 +2434,13 @@ button.calendar-event:hover {
     els.timelineSummary.textContent = `${items.length} item${items.length === 1 ? "" : "s"} / ${state.timeline.view}`;
     els.timelineList.classList.toggle("calendar-view", state.timeline.view === "calendar");
 
-    if (!items.length) {
-      els.timelineList.innerHTML = `<p class="empty-state">No timeline items match these filters.</p>`;
+    if (state.timeline.view === "calendar") {
+      renderTimelineCalendar(items);
       return;
     }
 
-    if (state.timeline.view === "calendar") {
-      renderTimelineCalendar(items);
+    if (!items.length) {
+      els.timelineList.innerHTML = `<p class="empty-state">No timeline items match these filters.</p>`;
       return;
     }
 
@@ -2452,37 +2571,68 @@ button.calendar-event:hover {
   }
 
   function renderTimelineCalendar(items) {
-    const datedItems = items.filter((item) => item.date);
-    const undatedItems = items.filter((item) => !item.date);
-    const months = groupByMonth(datedItems);
-    const sections = months.map(renderCalendarMonth);
-    if (undatedItems.length) sections.push(renderCalendarUnscheduled(undatedItems));
+    const monthKey = ensureCalendarMonth();
+    const taskItems = items.filter((item) => item.type === "task");
+    const datedTasks = taskItems.filter((item) => item.date);
+    const undatedTasks = taskItems.filter((item) => !item.date);
+    const monthTasks = datedTasks.filter((item) => item.date.startsWith(monthKey));
+    const loggedDays = getLogCountsByDate(items);
+    const sections = [
+      renderCalendarMonth(monthKey, monthTasks),
+      renderLogActivity(loggedDays),
+    ];
+
+    if (undatedTasks.length) sections.push(renderCalendarUnscheduled(undatedTasks));
     els.timelineList.replaceChildren(...sections);
+    els.timelineSummary.textContent = `${monthTasks.length} task date${monthTasks.length === 1 ? "" : "s"} / ${loggedDays.size} logged day${loggedDays.size === 1 ? "" : "s"}`;
   }
 
-  function groupByMonth(items) {
-    const map = new Map();
-    items.forEach((item) => {
-      const key = item.date.slice(0, 7);
-      if (!map.has(key)) map.set(key, []);
-      map.get(key).push(item);
-    });
-    return Array.from(map.entries())
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([month, monthItems]) => ({ month, items: monthItems }));
+  function ensureCalendarMonth() {
+    if (!state.timeline.calendarMonth || !/^\d{4}-\d{2}$/.test(state.timeline.calendarMonth)) {
+      state.timeline.calendarMonth = todayMonthKey();
+    }
+    return state.timeline.calendarMonth;
   }
 
-  function renderCalendarMonth(group) {
-    const [year, month] = group.month.split("-").map(Number);
+  function todayMonthKey() {
+    return Utils.todayInput().slice(0, 7);
+  }
+
+  function shiftCalendarMonth(delta) {
+    state.timeline.calendarMonth = addMonthsToKey(ensureCalendarMonth(), delta);
+    renderTimeline();
+  }
+
+  function addMonthsToKey(monthKey, delta) {
+    const [year, month] = monthKey.split("-").map(Number);
+    const next = new Date(year, month - 1 + delta, 1);
+    return `${next.getFullYear()}-${String(next.getMonth() + 1).padStart(2, "0")}`;
+  }
+
+  function renderCalendarMonth(monthKey, items) {
+    const [year, month] = monthKey.split("-").map(Number);
     const firstDate = new Date(year, month - 1, 1);
     const daysInMonth = new Date(year, month, 0).getDate();
-    const itemsByDate = groupByDate(group.items).reduce((map, day) => map.set(day.date, day.items), new Map());
+    const itemsByDate = groupByDate(items).reduce((map, day) => map.set(day.date, day.items), new Map());
     const section = document.createElement("section");
-    section.className = "calendar-month";
+    section.className = "calendar-month calendar-carousel";
 
+    const header = document.createElement("div");
+    header.className = "calendar-carousel-header";
     const heading = document.createElement("h3");
     heading.textContent = firstDate.toLocaleDateString([], { month: "long", year: "numeric" });
-    section.append(heading);
+    const controls = document.createElement("div");
+    controls.className = "calendar-carousel-controls";
+    controls.append(
+      calendarNavButton("Previous month", "<", () => shiftCalendarMonth(-1)),
+      calendarNavButton("Current month", "Today", () => {
+        state.timeline.calendarMonth = todayMonthKey();
+        renderTimeline();
+      }),
+      calendarNavButton("Next month", ">", () => shiftCalendarMonth(1))
+    );
+    header.append(heading, controls);
+    section.append(header);
 
     const grid = document.createElement("div");
     grid.className = "calendar-grid";
@@ -2500,12 +2650,29 @@ button.calendar-event:hover {
     }
 
     for (let day = 1; day <= daysInMonth; day += 1) {
-      const dateKey = `${group.month}-${String(day).padStart(2, "0")}`;
+      const dateKey = `${monthKey}-${String(day).padStart(2, "0")}`;
       grid.append(renderCalendarDay(day, dateKey, itemsByDate.get(dateKey) || []));
+    }
+
+    const trailingDays = (7 - ((firstDate.getDay() + daysInMonth) % 7)) % 7;
+    for (let index = 0; index < trailingDays; index += 1) {
+      const empty = document.createElement("div");
+      empty.className = "calendar-day empty";
+      grid.append(empty);
     }
 
     section.append(grid);
     return section;
+  }
+
+  function calendarNavButton(label, text, onClick) {
+    const button = document.createElement("button");
+    button.className = "secondary-button calendar-nav-button";
+    button.type = "button";
+    button.textContent = text;
+    button.setAttribute("aria-label", label);
+    button.addEventListener("click", onClick);
+    return button;
   }
 
   function renderCalendarDay(day, dateKey, items) {
@@ -2525,20 +2692,139 @@ button.calendar-event:hover {
   }
 
   function renderCalendarEvent(item) {
-    const event = document.createElement(item.type === "task" ? "button" : "div");
+    const event = document.createElement("button");
     event.className = `calendar-event ${item.type} ${item.dateKind || ""} ${item.identityTone || ""}`;
-    if (item.type === "task") {
-      event.type = "button";
-      event.textContent = `${item.identityLabel} ${item.label}: ${item.title}`;
-      event.title = `${item.identityLabel} ${item.label}: ${item.title} / ${item.text}`;
-      event.addEventListener("click", () => openTaskDialog(item.task.id));
-    } else {
-      event.textContent = item.hasFigure
-        ? `Entry + ${item.figureCount > 1 ? `${item.figureCount} figures` : "figure"}`
-        : "Daily entry";
-      event.title = item.text;
-    }
+    event.type = "button";
+    event.textContent = `${item.identityLabel} ${item.label}: ${item.title}`;
+    event.title = `${item.identityLabel} ${item.label}: ${item.title} / ${item.text}`;
+    event.addEventListener("click", () => openTaskDialog(item.task.id));
     return event;
+  }
+
+  function renderLogActivity(loggedDays) {
+    const dates = buildActivityDates(LOG_ACTIVITY_WEEKS);
+    const stats = logActivityStats(loggedDays, dates);
+    const section = document.createElement("section");
+    section.className = "log-activity";
+
+    const header = document.createElement("div");
+    header.className = "log-activity-header";
+    const title = document.createElement("div");
+    const eyebrow = document.createElement("p");
+    eyebrow.className = "eyebrow";
+    eyebrow.textContent = "Daily log streak";
+    const heading = document.createElement("h3");
+    heading.textContent = `${stats.loggedDaysInRange} logged day${stats.loggedDaysInRange === 1 ? "" : "s"} in the last ${LOG_ACTIVITY_WEEKS} weeks`;
+    title.append(eyebrow, heading);
+    const summary = document.createElement("p");
+    summary.className = "log-activity-summary";
+    summary.textContent = `Current streak ${stats.currentStreak} day${stats.currentStreak === 1 ? "" : "s"} / longest streak ${stats.longestStreak} day${stats.longestStreak === 1 ? "" : "s"}`;
+    header.append(title, summary);
+
+    const scroll = document.createElement("div");
+    scroll.className = "activity-scroll";
+    const grid = document.createElement("div");
+    grid.className = "activity-grid";
+    grid.style.setProperty("--activity-weeks", String(LOG_ACTIVITY_WEEKS));
+    grid.append(activityLabel(""));
+
+    for (let week = 0; week < LOG_ACTIVITY_WEEKS; week += 1) {
+      const weekStart = dates[week * 7];
+      const previousWeekStart = dates[(week - 1) * 7];
+      const shouldLabel = week === 0 || weekStart.getMonth() !== previousWeekStart.getMonth();
+      grid.append(activityLabel(shouldLabel ? weekStart.toLocaleDateString([], { month: "short" }) : ""));
+    }
+
+    ["", "Mon", "", "Wed", "", "Fri", ""].forEach((dayLabel, row) => {
+      grid.append(activityLabel(dayLabel, "activity-day-label"));
+      for (let week = 0; week < LOG_ACTIVITY_WEEKS; week += 1) {
+        const date = dates[(week * 7) + row];
+        grid.append(renderActivityCell(date, loggedDays));
+      }
+    });
+
+    scroll.append(grid);
+    const legend = document.createElement("div");
+    legend.className = "activity-legend";
+    legend.append(document.createTextNode("Less"));
+    [0, 1, 2, 3, 4].forEach((level) => {
+      const chip = document.createElement("span");
+      chip.className = `activity-cell level-${level}`;
+      chip.setAttribute("aria-hidden", "true");
+      legend.append(chip);
+    });
+    legend.append(document.createTextNode("More"));
+
+    section.append(header, scroll, legend);
+    return section;
+  }
+
+  function activityLabel(text, className = "activity-month-label") {
+    const label = document.createElement("span");
+    label.className = className;
+    label.textContent = text;
+    return label;
+  }
+
+  function buildActivityDates(weeks) {
+    const today = Utils.stripTime(new Date());
+    const currentSunday = Utils.addDays(today, -today.getDay());
+    const start = Utils.addDays(currentSunday, -((weeks - 1) * 7));
+    return Array.from({ length: weeks * 7 }, (_, index) => Utils.addDays(start, index));
+  }
+
+  function renderActivityCell(date, loggedDays) {
+    const today = Utils.stripTime(new Date());
+    const key = Utils.toDateInput(date);
+    const count = loggedDays.get(key) || 0;
+    const isFuture = date > today;
+    const cell = document.createElement("span");
+    cell.className = `activity-cell level-${activityLevel(count)}${isFuture ? " future" : ""}`;
+    cell.title = `${Utils.formatLongDate(key)}: ${count} entr${count === 1 ? "y" : "ies"}`;
+    cell.setAttribute("aria-label", cell.title);
+    return cell;
+  }
+
+  function activityLevel(count) {
+    if (count <= 0) return 0;
+    if (count === 1) return 1;
+    if (count === 2) return 2;
+    if (count === 3) return 3;
+    return 4;
+  }
+
+  function getLogCountsByDate(items) {
+    const counts = new Map();
+    items.forEach((item) => {
+      if (item.type !== "log" || !Utils.isDateInput(item.date)) return;
+      counts.set(item.date, (counts.get(item.date) || 0) + 1);
+    });
+    return counts;
+  }
+
+  function logActivityStats(loggedDays, dates) {
+    const todayKey = Utils.todayInput();
+    let currentStreak = 0;
+    let cursor = Utils.parseDate(todayKey);
+    while (cursor && loggedDays.has(Utils.toDateInput(cursor))) {
+      currentStreak += 1;
+      cursor = Utils.addDays(cursor, -1);
+    }
+
+    const sortedDates = Array.from(loggedDays.keys()).sort();
+    let longestStreak = 0;
+    let running = 0;
+    let previous = "";
+    sortedDates.forEach((dateKey) => {
+      const expected = previous ? Utils.toDateInput(Utils.addDays(Utils.parseDate(previous), 1)) : "";
+      running = dateKey === expected ? running + 1 : 1;
+      longestStreak = Math.max(longestStreak, running);
+      previous = dateKey;
+    });
+
+    const dateKeysInRange = new Set(dates.map((date) => Utils.toDateInput(date)));
+    const loggedDaysInRange = Array.from(loggedDays.keys()).filter((dateKey) => dateKeysInRange.has(dateKey)).length;
+    return { currentStreak, longestStreak, loggedDaysInRange };
   }
 
   function renderCalendarUnscheduled(items) {
@@ -2877,6 +3163,7 @@ button.calendar-event:hover {
       status: els.timelineStatusFilter.value,
       date: els.timelineDateFilter.value,
       view: state.timeline.view,
+      calendarMonth: state.timeline.calendarMonth,
     };
     renderTimeline();
   }

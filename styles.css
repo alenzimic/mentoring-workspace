@@ -894,6 +894,7 @@ h2 {
 }
 
 .calendar-month,
+.log-activity,
 .calendar-unscheduled {
   display: grid;
   gap: 10px;
@@ -902,16 +903,40 @@ h2 {
 }
 
 .calendar-month:first-child,
+.log-activity:first-child,
 .calendar-unscheduled:first-child {
   border-top: 0;
   padding-top: 0;
 }
 
 .calendar-month h3,
+.log-activity h3,
 .calendar-unscheduled h3 {
   margin: 0;
   color: var(--ink-soft);
   font-size: 15px;
+}
+
+.calendar-carousel-header,
+.log-activity-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.calendar-carousel-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.calendar-nav-button {
+  min-height: 32px;
+  min-width: 40px;
+  padding: 0 10px;
+  font-size: 13px;
 }
 
 .calendar-grid {
@@ -1011,6 +1036,85 @@ button.calendar-event:hover {
 
 .calendar-event.deadline {
   border-left-color: var(--red);
+}
+
+.log-activity {
+  gap: 12px;
+}
+
+.log-activity-summary {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+  text-align: right;
+}
+
+.activity-scroll {
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.activity-grid {
+  display: grid;
+  grid-template-columns: 28px repeat(var(--activity-weeks), 14px);
+  grid-template-rows: 18px repeat(7, 14px);
+  grid-auto-flow: row;
+  gap: 4px;
+  width: max-content;
+  min-width: 100%;
+  align-items: center;
+}
+
+.activity-month-label,
+.activity-day-label {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 850;
+  line-height: 1;
+}
+
+.activity-day-label {
+  text-align: right;
+}
+
+.activity-cell {
+  display: block;
+  width: 14px;
+  height: 14px;
+  border: 1px solid rgba(63, 67, 56, 0.08);
+  border-radius: 3px;
+  background: #ebe5d8;
+}
+
+.activity-cell.level-1 {
+  background: #dce9d3;
+}
+
+.activity-cell.level-2 {
+  background: #b8d49d;
+}
+
+.activity-cell.level-3 {
+  background: #7da369;
+}
+
+.activity-cell.level-4 {
+  background: #416f47;
+}
+
+.activity-cell.future {
+  opacity: 0.42;
+}
+
+.activity-legend {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
 }
 
 .modal {
@@ -1194,6 +1298,19 @@ button.calendar-event:hover {
 
   .calendar-month {
     min-width: 720px;
+  }
+
+  .calendar-carousel-header,
+  .log-activity-header {
+    display: grid;
+  }
+
+  .calendar-carousel-controls {
+    justify-content: flex-start;
+  }
+
+  .log-activity-summary {
+    text-align: left;
   }
 
   .panel-header {
